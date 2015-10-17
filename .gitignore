@@ -1,2 +1,7 @@
 /.pydevproject
+
+/src/*.pyc
+
 /.project
+
+/.settings
