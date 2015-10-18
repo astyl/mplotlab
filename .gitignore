@@ -2,6 +2,7 @@
 
 /src/*.pyc
 
+/src/ArtistProperties/*.pyc
 /.project
 
 /.settings
