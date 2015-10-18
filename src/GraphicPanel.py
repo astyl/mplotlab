@@ -31,5 +31,6 @@ class GraphicPanel(wx.Panel):
         return self.__figure
     
     def draw(self,*args,**kwargs):
+        self.__canvas.ClearBackground()
         self.__canvas.draw()
     

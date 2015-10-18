@@ -96,10 +96,15 @@ class MainWin(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnAbout, id=ID_About)
         self.Bind(wx.EVT_MENU_RANGE, self.OnRestorePerspective, id=ID_FirstPerspective,
                   id2=ID_FirstPerspective+1000)
-
+    
     def draw(self):
         self.__graphicPanel.draw()
+        self.__treePanel.updateTree()
         self.__shellPanel.refreshLocals()
+        self.updatePageConfig()
+        
+    def updatePageConfig(self):
+        self.__configPanel.updatePage(self.__treePanel.getArtistSel())
         
     def getGraphicPanel(self):
         return self.__graphicPanel
