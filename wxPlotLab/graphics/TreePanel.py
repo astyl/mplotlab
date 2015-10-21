@@ -4,7 +4,7 @@ import wx
 
 class TreePanel(wx.TreeCtrl):
 
-    def __init__(self,parent):
+    def __init__(self,parent,figure):        
         wx.TreeCtrl.__init__(self,parent, -1, wx.Point(0, 0), wx.Size(160, 250),
                        wx.TR_DEFAULT_STYLE | wx.NO_BORDER)
     
@@ -15,6 +15,7 @@ class TreePanel(wx.TreeCtrl):
         self.AssignImageList(imglist)
         self.Bind(wx.EVT_TREE_SEL_CHANGED, self.OnSelChanged, self)
         
+        self.__figure = figure
         self.__mainWin = parent
         self.__modelSel = None
         
@@ -28,18 +29,15 @@ class TreePanel(wx.TreeCtrl):
         
     def updateTree(self):
         self.DeleteAllItems()
-        from graphics import figure
-        
-        slide = figure.abcModel
-        root = self.AddRoot(slide.get_name(),data=wx.TreeItemData(slide))
-        if slide == self.__modelSel: self.SelectItem(root)
-
-        for axes in figure.axes:
-            projection = axes.abcModel
-            it = self.AppendItem(root, projection.get_name(), 0,data=wx.TreeItemData(projection))
-            if projection == self.__modelSel: self.SelectItem(it)
-            
-            for line in axes.lines:
-                collection = line.abcModel
-                itt = self.AppendItem(it, collection.get_name(), 1,data=wx.TreeItemData(collection))
-                if collection == self.__modelSel: self.SelectItem(itt)
+        slide = self.__mainWin.getCurrentSlide()
+        if not slide is None:
+            root = self.AddRoot(slide.get_name(),data=wx.TreeItemData(slide))
+            if slide == self.__modelSel: self.SelectItem(root)
+    
+            for projection in slide.get_projections():
+                it = self.AppendItem(root, projection.get_name(), 0,data=wx.TreeItemData(projection))
+                if projection == self.__modelSel: self.SelectItem(it)
+                
+                for collection in projection.get_collections():
+                    itt = self.AppendItem(it, collection.get_name(), 1,data=wx.TreeItemData(collection))
+                    if collection == self.__modelSel: self.SelectItem(itt)

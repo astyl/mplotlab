@@ -15,7 +15,7 @@ class GraphicPanel(wx.Panel):
         self.__figure = Figure()
         self.__canvas = CanvasPanel(self, -1, self.__figure)
 
-        # SLIDE
+        # SLIDE (MODEL)
         self.__slide = None
         
         # RESIZE
@@ -26,7 +26,7 @@ class GraphicPanel(wx.Panel):
         self.Show()
         
     def OnPaint(self, event):
-        self.drawSlide()
+        self.draw()
     
     def getCanvas(self):
         return self.__canvas
@@ -34,11 +34,16 @@ class GraphicPanel(wx.Panel):
     def getFigure(self):
         return self.__figure
     
-    def buildSlide(self,*args,**kwargs):
-        if kwargs.has_key("slide"):
-            self.__slide = kwargs.pop("slide")
+    def getSlide(self):
+        return self.__slide
+    
+    def setSlide(self,slide):
+        self.__slide = slide
+    
+    def build(self,*args,**kwargs):
         self.__figure.clear()
-        
+        if self.__slide is None:
+            return 
         ### TO BE REFACTORED WITH A GREAT FIGURE FACTORY 
         # Slide
         title = self.__slide.get_title()
@@ -77,8 +82,10 @@ class GraphicPanel(wx.Panel):
                 line.abcModel = collection
                 
                 
-        ### 
-    def drawSlide(self):
-        self.__canvas.ClearBackground()
+        ###
+        if hasattr(self.GetParent(),"onBuild"):
+            self.GetParent().onBuild()
+
+    def draw(self):
         self.__canvas.draw()
     

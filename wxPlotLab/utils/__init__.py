@@ -1,7 +1,7 @@
 # -*-coding:Utf-8 -*
 
 ## logger
-from Logger import log 
+from Logger import log
 ## params
 from ParamMgr import configParser
 ## error handler

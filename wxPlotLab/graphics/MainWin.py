@@ -21,10 +21,10 @@ class MainWin(wx.Frame):
                           size=(1200,675), 
                           style=wx.DEFAULT_FRAME_STYLE|wx.SUNKEN_BORDER|wx.CLIP_CHILDREN)
         self.__graphicPanel = GraphicPanel(self)
-        self.__graphicCtrl = GraphicCtlr(self.__graphicPanel.getCanvas())
+        self.__graphicCtrl = GraphicCtlr(self)
         # panels
         
-        self.__treePanel= TreePanel(self)
+        self.__treePanel= TreePanel(self,self.getFigure())
         self.__configPanel= ConfigPanel(self)
         self.__shellPanel = ShellPanel(self)   
         # tell FrameManager to manage this frame        
@@ -97,14 +97,34 @@ class MainWin(wx.Frame):
         self.Bind(wx.EVT_MENU_RANGE, self.OnRestorePerspective, id=ID_FirstPerspective,
                   id2=ID_FirstPerspective+1000)
     
-    def buildSlide(self,*a,**k):
-        self.__graphicPanel.buildSlide(*a,**k)
+    
+    def getCanvas(self):
+        return self.__graphicPanel.getCanvas()
+    
+    def getFigure(self):
+        return self.__graphicPanel.getFigure()
+
+    def build(self,*a,**k):
+        self.__graphicPanel.build(*a,**k)
+        self.onBuild()
+        
+    def onBuild(self):
         self.__treePanel.updateTree()
-        self.__shellPanel.refreshLocals()
+        dlocals = {
+            "app": wx.GetApp(),
+            "win": self,
+            "slide": self.getCurrentSlide(),
+            "figure": self.getFigure(),
+            "canvas": self.getCanvas(),            
+        }
+        self.__shellPanel.refreshLocals(dlocals)
         self.updatePageConfig()
     
-    def drawSlide(self,*a,**k):
-        self.__graphicPanel.drawSlide(*a,**k)
+    def getCurrentSlide(self):
+        return self.__graphicPanel.getSlide()
+
+    def draw(self,*a,**k):
+        self.__graphicPanel.draw(*a,**k)
         
     def updatePageConfig(self):
         self.__configPanel.updatePage(self.__treePanel.getModelSel())

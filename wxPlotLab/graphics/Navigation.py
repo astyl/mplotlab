@@ -16,23 +16,19 @@ cursord = {
     }
 
 class Navigation(NavigationToolbar2):
-    '''
-    classdocs
-    '''
+    def __init__(self,*a,**k):
+        self.__mainWin = k.pop("mainWin")
+        NavigationToolbar2.__init__(self, *a,**k)
+        
     def _init_toolbar(self,*args,**kwargs):
         pass
     
-    def set_message(self,s):
-        from graphics import app
-        app.mainWin.GetStatusBar().SetStatusText(s,0)
+    def set_message(self,s):        
+        self.__mainWin.GetStatusBar().SetStatusText(s,0)
         
     def set_cursor(self, cursor):
         cursor =wx.StockCursor(cursord[cursor])
         self.canvas.SetCursor( cursor )
-
-    def release(self, event):
-        try: del self.lastrect
-        except AttributeError: pass
 
     def dynamic_update(self):
         d = self._idle

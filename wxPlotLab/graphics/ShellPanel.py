@@ -1,7 +1,6 @@
 # -*-coding:Utf-8 -*
 
 from wx.py.shell import Shell
-import graphics
 
 class ShellPanel(Shell):
     
@@ -9,5 +8,5 @@ class ShellPanel(Shell):
         #introText="""We could use ipython ?"""
         Shell.__init__(self,parent,introText="")
     
-    def refreshLocals(self):
-        self.interp.locals.update(graphics.__dict__)
+    def refreshLocals(self,dlocals):
+        self.interp.locals.update(dlocals)

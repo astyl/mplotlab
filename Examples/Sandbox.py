@@ -5,8 +5,11 @@ import numpy as np
 import sys
 
 # src
-from graphics import app,figure,gc,gp,win
-from dataModel import Variable,Collection,Projection,Slide
+from wxPlotLab import newWxPlotApp
+from wxPlotLab.dataModel import Variable,\
+                                Collection,\
+                                Projection,\
+                                Slide
 
 
 # DATA MODEL
@@ -29,7 +32,7 @@ projection = Projection(
 projections.append(projection)
 collections = projection.get_collections()
 
-t = np.arange(0.0,3.0,0.01)
+t = np.arange(0.0,3.0,0.1)
 collections.append(Collection(
     name = "collection1",
     X = Variable(data=t),
@@ -60,7 +63,7 @@ projection = Projection(
 projections.append(projection)
 collections = projection.get_collections()
 
-t = np.arange(0.0,3.0,0.01)
+t = np.arange(0.0,3.0,0.1)
 collections.append(Collection(
     name = "collection3",
     X = Variable(data=t),
@@ -71,11 +74,23 @@ collections.append(Collection(
 print slide
 # END
 
-# MODE ZOOM (VIA GRAPHIC CONTROLER)
-gc.zoom()
-# DRAW AND DISPLAY (VIA GRAPHIC PANEL)
-win.buildSlide(slide=slide)
-win.drawSlide()
+app = newWxPlotApp()
+win = app.GetTopWindow()
+gc = win.getGraphicCtrl()
+gp = win.getGraphicPanel()
 
+# MODE ZOOM (GRAPHIC CONTROLER)
+gc.zoom()
+
+# SET SLIDE MODEL (GRAPHIC PANEL)
+gp.setSlide(slide)
+
+# BUILDING ARTISTS IN THE FIGURE (GRAPHIC PANEL)
+gp.build()
+
+# canvas.draw (VIA GRAPHIC PANEL)
+gp.draw()
+
+win.draw()
 # MAINLOOP
-app.run()
+app.MainLoop()

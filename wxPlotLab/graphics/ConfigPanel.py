@@ -3,7 +3,7 @@
 import wx
 import wx.propgrid as wxpg
 from properties import propertyMap
-from systemUtils import log    
+from wxPlotLab.utils import log
 from matplotlib.colors import ColorConverter,rgb2hex
 
 class ConfigPanel( wx.Panel ):
@@ -58,8 +58,8 @@ class ConfigPanel( wx.Panel ):
                 value = value.encode()
             self.__modelSel.setAttr(name,value)
          
-        self.__mainWin.buildSlide()
-        self.__mainWin.drawSlide()
+        self.__mainWin.build()
+        self.__mainWin.draw()
         
     def updatePage(self,modelSel):
         if modelSel is None:

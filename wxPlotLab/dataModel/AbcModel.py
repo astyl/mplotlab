@@ -1,6 +1,5 @@
 # -*-coding:Utf-8 -*
-
-from systemUtils import checkTypeReturned, checkTypeParams
+from wxPlotLab.utils import checkTypeReturned, checkTypeParams
 
 class AbcModel(object):
     attributes = {
