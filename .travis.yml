@@ -20,11 +20,11 @@ virtualenv:
 
 before_install:
     - sudo apt-get update
-    - sudo apt-get install $PYTHON-setuptools
-    - sudo apt-get install $PYTHON-numpy
+    - sudo apt-get install $PYTHON-setuptools -y
+    - sudo apt-get install $PYTHON-numpy -y
     - sudo apt-get install $PYTHON-matplotlib -y
-    - sudo apt-get install $PYTHON-wxgtk3.0
-    - sudo apt-get install $PYTHON-nose
+    - sudo apt-get install $PYTHON-wxgtk2.9 -y
+    - sudo apt-get install $PYTHON-nose -y
 
 install:
     - sudo $PYTHON setup.py install
