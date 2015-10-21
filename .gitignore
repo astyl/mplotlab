@@ -1,8 +1,7 @@
 /.pydevproject
 
-/src/*.pyc
-
-/src/ArtistProperties/*.pyc
+*.pyc
+*
 /.project
 
 /.settings
