@@ -97,23 +97,23 @@ class MainWin(wx.Frame):
         self.Bind(wx.EVT_MENU_RANGE, self.OnRestorePerspective, id=ID_FirstPerspective,
                   id2=ID_FirstPerspective+1000)
     
-    def draw(self):
-        self.__graphicPanel.draw()
+    def buildSlide(self,*a,**k):
+        self.__graphicPanel.buildSlide(*a,**k)
         self.__treePanel.updateTree()
         self.__shellPanel.refreshLocals()
         self.updatePageConfig()
+    
+    def drawSlide(self,*a,**k):
+        self.__graphicPanel.drawSlide(*a,**k)
         
     def updatePageConfig(self):
-        self.__configPanel.updatePage(self.__treePanel.getArtistSel())
+        self.__configPanel.updatePage(self.__treePanel.getModelSel())
         
     def getGraphicPanel(self):
         return self.__graphicPanel
     
     def getGraphicCtrl(self):
         return self.__graphicCtrl
-                
-    def display(self,*args,**kwargs):
-        self.graphicDataBrowser.graphicPanel.displayGraphic(*args,**kwargs)
 
     def OnClose(self, event):
         self._mgr.UnInit()

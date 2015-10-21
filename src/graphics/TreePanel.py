@@ -16,30 +16,30 @@ class TreePanel(wx.TreeCtrl):
         self.Bind(wx.EVT_TREE_SEL_CHANGED, self.OnSelChanged, self)
         
         self.__mainWin = parent
-        self.__artistSel = None
+        self.__modelSel = None
         
-    def getArtistSel(self):
-        return self.__artistSel
+    def getModelSel(self):
+        return self.__modelSel
         
     def OnSelChanged(self,event):
         item = event.GetItem()
-        self.__artistSel = self.GetItemData(item).GetData()
+        self.__modelSel = self.GetItemData(item).GetData()
         self.__mainWin.updatePageConfig()
         
     def updateTree(self):
         self.DeleteAllItems()
-        from __init__ import figure
+        from graphics import figure
         
-        
-        root = self.AddRoot("%s"%figure,data=wx.TreeItemData(figure))
-        if figure == self.__artistSel: self.SelectItem(root)
+        slide = figure.abcModel
+        root = self.AddRoot(slide.get_name(),data=wx.TreeItemData(slide))
+        if slide == self.__modelSel: self.SelectItem(root)
 
         for axes in figure.axes:
-            it = self.AppendItem(root, "%s"%axes, 0,data=wx.TreeItemData(axes))
-            if axes == self.__artistSel: self.SelectItem(it)
+            projection = axes.abcModel
+            it = self.AppendItem(root, projection.get_name(), 0,data=wx.TreeItemData(projection))
+            if projection == self.__modelSel: self.SelectItem(it)
+            
             for line in axes.lines:
-                itt = self.AppendItem(it, "%s"%line, 1,data=wx.TreeItemData(line))
-                if line == self.__artistSel: self.SelectItem(itt)
-
-        import matplotlib.axes
-        matplotlib.axes.Axes
+                collection = line.abcModel
+                itt = self.AppendItem(it, collection.get_name(), 1,data=wx.TreeItemData(collection))
+                if collection == self.__modelSel: self.SelectItem(itt)

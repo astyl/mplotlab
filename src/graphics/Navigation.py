@@ -23,7 +23,7 @@ class Navigation(NavigationToolbar2):
         pass
     
     def set_message(self,s):
-        from __init__ import app
+        from graphics import app
         app.mainWin.GetStatusBar().SetStatusText(s,0)
         
     def set_cursor(self, cursor):

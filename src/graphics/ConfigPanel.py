@@ -2,8 +2,9 @@
 
 import wx
 import wx.propgrid as wxpg
-from ArtistProperties import artistParams
-from __init__ import log
+from properties import propertyMap
+from systemUtils import log    
+from matplotlib.colors import ColorConverter,rgb2hex
 
 class ConfigPanel( wx.Panel ):
     def __init__( self, parent):
@@ -19,18 +20,13 @@ class ConfigPanel( wx.Panel ):
         
         # DATA
         self.__mainWin = parent
-        self.__artistSel = None
+        self.__modelSel = None
                         
         # CFG
         self.but.Bind( wx.EVT_BUTTON, self.updateFigure )
         self.pg.SetExtraStyle(wxpg.PG_EX_HELP_AS_TOOLTIPS)
-#         self.pg.RegisterEditor(TrivialPropertyEditor)
-#         self.pg.RegisterEditor(SampleMultiButtonEditor)
-#         self.pg.RegisterEditor(LargeImageEditor)
         self.setProperties()
-        
 
-        
     def setProperties(self):
         topsizer = wx.BoxSizer(wx.VERTICAL)
         topsizer.Add(self.txt, 0, wx.EXPAND)
@@ -48,59 +44,50 @@ class ConfigPanel( wx.Panel ):
         self.Layout()
         
     def updateFigure(self,event):
-        if self.__artistSel is None:
+        if self.__modelSel is None:
             return
         
-        values = self.pg.GetPropertyValues()
-        for param in self.__params:
-            name = param[0]
-            setter = "set_%s"%name
-            
-            setterFn = getattr(self.__artistSel,setter)
-            if name in values.keys():
-                value = values[name]
-                ## To be handled by custom property 
-                if "color" in name:
-                    r,g,b = value.Get()
-                    value = r/255.,g/255.,b/255.
-                ### 
-                setterFn(value)
+        for name,value in self.pg.GetPropertyValues().items():
+            ## To be handled by custom property 
+            if "color" == self.__modelSel.getProperties()[name]:
+                r,g,b = value.Get()
+                value = r/255.,g/255.,b/255.
+                value = rgb2hex(value)            
+            ### 
+            if isinstance(value,unicode):
+                value = value.encode()
+            self.__modelSel.setAttr(name,value)
          
-        self.__mainWin.draw()
+        self.__mainWin.buildSlide()
+        self.__mainWin.drawSlide()
         
-    def updatePage(self,artist):
-        if artist is None:
+    def updatePage(self,modelSel):
+        if modelSel is None:
             self.txt.SetLabel("")
             return
     
-        txtLabel = "%s"%artist
+        txtLabel = modelSel.get_name()
         self.txt.SetLabel(txtLabel)
         log.info(txtLabel)
             
-        self.__artistSel = artist
+        self.__modelSel = modelSel
 
         if self.pg.GetPageCount()>0:
             self.pg.RemovePage(0)
         self.pg.AddPage(txtLabel)        
         
-        self.__params = []
-        for artistClass,params in artistParams.items():
-            if isinstance(artist,artistClass):
-                self.__params.extend(params)
-                
-        for param in self.__params:
-            name, propertyClass= param
-            getter = "get_%s"%name
+        #modelSel        
+        for name, propertyKey in modelSel.getProperties().items():
+            propertyClass = propertyMap[propertyKey]            
+            value=modelSel.getAttr(name)
             
-            getterFn = getattr(artist,getter)
-            value=getterFn()
             ## To be handled by custom property 
             if "alpha" == name and value is None:
                 value = 1.0
             
-            if "color" in name:
-                from matplotlib.colors import ColorConverter
+            if "color" == propertyKey:
                 c = ColorConverter()
+
                 if isinstance(value,(unicode,str)):
                     if "none" ==  value.lower():
                         value = None

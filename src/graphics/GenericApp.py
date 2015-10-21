@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-from MainWin import MainWin 
+from MainWin import MainWin
 import wx
 
 class GenericApp(wx.App):
@@ -11,9 +11,7 @@ class GenericApp(wx.App):
         self.SetTopWindow(self.mainWin)
         self.mainWin.Show()
     
-    def run(self,test=None):
-        if callable(test):
-            test()
+    def run(self):
         self.MainLoop()
     
 
