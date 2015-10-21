@@ -1,7 +1,7 @@
 /.pydevproject
 
 *.pyc
-*
+*~
 /.project
 
 /.settings
