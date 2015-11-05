@@ -23,7 +23,10 @@ before_install:
     - sudo apt-get install $PYTHON-setuptools -y
     - sudo apt-get install $PYTHON-numpy -y
     - sudo apt-get install $PYTHON-matplotlib -y
-    - sudo apt-get install $PYTHON-wxgtk2.9 -y
+    - sudo add-apt-repository "deb http://archive.ubuntu.com/ubuntu utopic main restricted universe"
+    - sudo apt-get update
+    - apt-cache search python-wxgtk3.0
+    - sudo apt-get install python-wxgtk3.0 -y
     - sudo apt-get install $PYTHON-nose -y
 
 install:
