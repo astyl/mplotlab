@@ -1,103 +1,87 @@
 # -*-coding:Utf-8 -*
 from wxPlotLab.utils import checkTypeReturned, checkTypeParams
 
+class AttributeTypes:
+    # this class is only used as a simple enumeration
+    STRING,COLOR,NDARRAY,INT,FLOAT,MODEL= list(range(6))
+
 class AbcModel(object):
-    attributes = {
-        "name": (str,"string","defaultName","name info"),
+    """ Abstract class representing a model element.
+    Use the parameter 'attributeInfos' to auto generate 
+    its properties.
+    """
+    attributeInfos = { 
+        # attribute definition
+        "name": (                  # attribute name
+             str,                  # attribute value instance of
+             AttributeTypes.STRING, # attribute type (from enum AttributeTypes)
+             "defaultName",        # attribute default value (can be None)
+             "name info"           # attribute short description
+        ),
     }
+    
     def __init__(self,**k):
-        self.__properties = {}
-        
-        for name,infos in self.attributes.items():
-            vtype,propertyInfo,defaultValue,desc = infos
-                
-            setterFn = self.__createSetter(name,vtype,desc)
-            getterFn = self.__createGetter(name,vtype,desc)
+        for name,infos in self.attributeInfos.items():
+            vclass,_,value,desc = infos
+            if not isinstance(value,vclass):
+                raise Exception("Attribute default value of '%s'"+ \
+                                "should be an instance of '%s' "%(name,vclass))
             
-            self.__properties[name] = propertyInfo 
-            setterFn(defaultValue)
-            setattr(self,"set_"+name,setterFn)
-            setattr(self,"get_"+name,getterFn)
+            # add attribute (ex: 'self._name')
+            setattr(self,"_"+name,value)
+            # add attribute setter (ex: 'self.set_name('new_name')')
+            setattr(self,"set_"+name,self.__createSetter(name,vclass,desc))
+            # add attribute getter (ex: 'self.get_name()')
+            setattr(self,"get_"+name,self.__createGetter(name,vclass,desc))
         
+        ## Specialisation from dict arguments
         self.update(**k)
 
     def update(self,**k):
+        """ update the model from dict arguments
+        ex: self.update(name="toto",size=170)
+        """
         for name, value in k.items():
             self.setAttr(name,value)
-    
-    def setAttr(self,name,value):
-        getattr(self,"set_"+name)(value)
-    
-    def getAttr(self,name):
-        return getattr(self,"get_"+name)()
-        
-    def __str__(self):
-        msgL = ["[%s]"%self.__class__.__name__]
-        msgL.extend([ "%s:%s" % (name,self.getAttr(name))
-                                for name in self.attributes.keys()])
-        return "\n".join(msgL)
-    
-    def getProperties(self):
-        return self.__properties
 
-    def __createSetter(self,name,vtype,desc):
-        @checkTypeParams(vtype)
+    def __checkAttrName(self,name):
+        if not hasattr(self, "_"+name):
+            raise Exception("Attribute %s doesn't exist" % name)
+
+    def setAttr(self,name,value):
+        """ set the value of an attribute 
+        ex : self.setAttr("name",value)
+        """
+        self.__checkAttrName(name)
+        getattr(self,"set_"+name)(value)
+
+    def getAttr(self,name):
+        self.__checkAttrName(name)
+        return getattr(self,"get_"+name)()
+
+    def __str__(self):
+        msgT = ["[%s]"%self.__class__.__name__]
+        msgL = ["%s:%s" % (name,self.getAttr(name))
+                                for name in self.attributeInfos.keys()]
+        return "\n".join(msgT+msgL)
+
+    def __createSetter(self,name,vclass,desc):
+        @checkTypeParams(vclass)
         def setterFn(value):
-            return setattr(self,"__"+name,value)
+            return setattr(self,"_"+name,value)
         setterFn.__doc__ = """
 {desc}
-@param {name} \a {vtype}
-""".format(name=name,vtype=vtype,desc=desc)
+@param {name} {vclass}
+""".format(name=name,vclass=vclass,desc=desc)
         return setterFn
         
-    def __createGetter(self,name,vtype,desc):
-        @checkTypeReturned(vtype)
+    def __createGetter(self,name,vclass,desc):
+        @checkTypeReturned(vclass)
         def getterFn():
-            return getattr(self,"__"+name)
+            return getattr(self,"_"+name)
         getterFn.__doc__ = """
 {desc}
-@return {name} \a {vtype}
-""".format(name=name,vtype=vtype,desc=desc)
+@return {name} {vclass}
+""".format(name=name,vclass=vclass,desc=desc)
         return getterFn
 
-if __name__ == "__main__":
-    
-    print "# TEST 1"
-    
-    class TestClass(AbcModel):
-        attributes = dict(AbcModel.attributes)
-        attributes.update({
-            "name2": (str,"string","","info name"),                      
-            "paramBool": (bool,"bool",False,"info bool"),                      
-            "paramInt": (int,"int",0,"info int"),                      
-            "paramFloat": (float,"float",0.,"info float"),                      
-            "paramColor": (object,"color","blue","info color"),                      
-            "paramTuple": (tuple,"list",tuple(),"info tuple"),                      
-            "paramList": (list,"list",list(),"info list"),
-        })
-   
-    tc = TestClass()
-    
-    
-    print tc
-    
-    print "# TEST 2"
-    tc.set_paramFloat(4.5)
-    print tc.get_paramFloat() == 4.5
-    try:
-        tc.set_paramInt(4.6)
-    except TypeError as e:
-        print e
-    
-    print "# TEST 3"
-    ll = tc.get_paramList()
-    ll.append("toto")
-    print ll
-    print tc.get_paramList()
-    
-    print "# TEST 4"
-    print tc.get_paramTuple.__doc__
-    
-    print "# TEST 5"
-    tc.update(paramBool=True,paramList=["titi"])
-    print tc

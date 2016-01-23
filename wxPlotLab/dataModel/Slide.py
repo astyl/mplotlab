@@ -1,12 +1,12 @@
 # -*-coding:Utf-8 -*
 
-from AbcModel import AbcModel
+from AbcModel import AbcModel,AttributeTypes
 
 class Slide(AbcModel):
-    attributes = dict(AbcModel.attributes)
-    attributes.update({
-        "projections": (list,"model",[],"projections"),
-        "title": (str,"string","","figure title"),
+    attributeInfos = dict(AbcModel.attributeInfos)
+    attributeInfos.update({ 
+        "projections": (list,AttributeTypes.MODEL,[],"projections"),
+        "title": (str,AttributeTypes.STRING,"","figure title"),
     })
     
     

@@ -1,12 +1,12 @@
 # -*-coding:Utf-8 -*
 
-from AbcModel import AbcModel
+from AbcModel import AbcModel,AttributeTypes
 import numpy as np
 
 class Variable(AbcModel):
-    attributes = dict(AbcModel.attributes)
-    attributes.update({
-        "data": (np.ndarray,"ndarray",np.array([]),"data"),
+    attributeInfos = dict(AbcModel.attributeInfos)
+    attributeInfos.update({
+        "data": (np.ndarray,AttributeTypes.NDARRAY,np.array([]),"data"),
         # filter min/max expression
         # source ?
     })

@@ -18,14 +18,14 @@ def checkTypeParams(*aTypes,**kTypes):
             # [*] 
             for a,aType in zip(args,aTypes):
                 if not isinstance(a,aType):
-                    raise TypeError("TypeError:expected %s, got %s"\
+                    raise TypeError(u"TypeError:expected %s, got %s"\
                                             % (aType, type(a)))
             # [**]
             for param,val in kwargs.items():
                 if kTypes.has_key(param) and \
                         not isinstance(val,kTypes[param]):
-                    raise TypeError("TypeError[%s]:expected %s, got %s"\
-                                            % (param,kTypes[param], type(a)))
+                    raise TypeError(u"TypeError[%s]:expected %s, got %s"\
+                                            % (param,kTypes[param], type(val)))
             return fn(*args,**kwargs)
         return fn2
     return deco    
@@ -75,7 +75,7 @@ if __name__ == "__main__":
     print testMethod(9,lola=3)
     try:
         testMethod(lola="5")
-    except Exception as e:
+    except TypeError as e:
         print e
 
     
