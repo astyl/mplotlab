@@ -7,14 +7,17 @@ from wx.propgrid import ColourProperty,\
                         IntProperty,\
                         StringProperty
 
-
+# class :
+#     # this class is only used as a simple enumeration
+#     STRING,COLOR,NDARRAY,INT,FLOAT,MODEL= list(range(6))
+from wxPlotLab.dataModel import AttributeTypes
 propertyMap = {
-    "ndarray": PyObjectProperty,
-    "color": ColourProperty,   
-    "model": PyObjectProperty,
-    "string":StringProperty,
-    "bool":BoolProperty,
-    "int":IntProperty,
-    "float":FloatProperty    
+    AttributeTypes.NDARRAY: PyObjectProperty,
+    AttributeTypes.COLOR: ColourProperty,   
+    AttributeTypes.MODEL: PyObjectProperty,
+    AttributeTypes.STRING:StringProperty,
+    AttributeTypes.BOOL:BoolProperty,
+    AttributeTypes.INT:IntProperty,
+    AttributeTypes.FLOAT:FloatProperty    
 }
 

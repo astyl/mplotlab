@@ -1,8 +1,6 @@
 # -*-coding:Utf-8 -*
 
-import unittest
 import numpy as np
-import sys
 
 # src
 from wxPlotLab import newWxPlotApp
@@ -76,21 +74,17 @@ print slide
 
 app = newWxPlotApp()
 win = app.GetTopWindow()
-gc = win.getGraphicCtrl()
 gp = win.getGraphicPanel()
 
-# MODE ZOOM (GRAPHIC CONTROLER)
-gc.zoom()
-
 # SET SLIDE MODEL (GRAPHIC PANEL)
-gp.setSlide(slide)
+win.setSlide(slide)
 
-# BUILDING ARTISTS IN THE FIGURE (GRAPHIC PANEL)
-gp.build()
+# BUILDING ARTISTS IN THE FIGURE
+win.build()
 
-# canvas.draw (VIA GRAPHIC PANEL)
-gp.draw()
-
+# canvas.draw
 win.draw()
+win.getGraphicCtrl().zoom()
+
 # MAINLOOP
 app.MainLoop()

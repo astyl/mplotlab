@@ -1,7 +1,6 @@
 # -*-coding:Utf-8 -*
 
 from GraphicPanel import GraphicPanel
-from GraphicCtlr import GraphicCtlr
 from ConfigPanel import ConfigPanel
 from ShellPanel import ShellPanel
 from TreePanel import TreePanel
@@ -21,7 +20,6 @@ class MainWin(wx.Frame):
                           size=(1200,675), 
                           style=wx.DEFAULT_FRAME_STYLE|wx.SUNKEN_BORDER|wx.CLIP_CHILDREN)
         self.__graphicPanel = GraphicPanel(self)
-        self.__graphicCtrl = GraphicCtlr(self)
         # panels
         
         self.__treePanel= TreePanel(self,self.getFigure())
@@ -107,7 +105,7 @@ class MainWin(wx.Frame):
     def build(self,*a,**k):
         self.__graphicPanel.build(*a,**k)
         self.onBuild()
-        
+    
     def onBuild(self):
         self.__treePanel.updateTree()
         dlocals = {
@@ -123,6 +121,9 @@ class MainWin(wx.Frame):
     def getCurrentSlide(self):
         return self.__graphicPanel.getSlide()
 
+    def setSlide(self,slide):
+        self.__graphicPanel.setSlide(slide)
+
     def draw(self,*a,**k):
         self.__graphicPanel.draw(*a,**k)
         
@@ -133,7 +134,7 @@ class MainWin(wx.Frame):
         return self.__graphicPanel
     
     def getGraphicCtrl(self):
-        return self.__graphicCtrl
+        return self.__graphicPanel.getGraphicCtrl()
 
     def OnClose(self, event):
         self._mgr.UnInit()
@@ -183,5 +184,4 @@ andreastyl@gmail.com
         self.x = self.x + 20
         x = self.x
         pt = self.ClientToScreen(wx.Point(0, 0))
-        
         return wx.Point(pt.x + x, pt.y + x)

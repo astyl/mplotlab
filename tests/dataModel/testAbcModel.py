@@ -6,17 +6,16 @@ from wxPlotLab.dataModel.AbcModel import AbcModel
 class TestAbcModel(unittest.TestCase):
     def setUp(self):
         class TestClass(AbcModel):
-            attributeInfos = dict(AbcModel.attributeInfos)
-            attributeInfos.update({
-                "name": (str,"string","","info name"),                      
-                "name2": (str,"string","","info name"),                      
-                "paramBool": (bool,"bool",False,"info bool"),                      
-                "paramInt": (int,"int",0,"info int"),                      
-                "paramFloat": (float,"float",0.,"info float"),                      
-                "paramColor": (object,"color","blue","info color"),                      
-                "paramTuple": (tuple,"list",tuple(),"info tuple"),                      
-                "paramList": (list,"list",list(),"info list"),
-            })
+            attributeInfos = list(AbcModel.attributeInfos)
+            attributeInfos.extend([
+                ("name2", (str,"string","","info name")),                      
+                ("paramBool", (bool,"bool",False,"info bool")),                      
+                ("paramInt", (int,"int",0,"info int")),                      
+                ("paramFloat", (float,"float",0.,"info float")),                      
+                ("paramColor", (object,"color","blue","info color")),                      
+                ("paramTuple", (tuple,"list",tuple(),"info tuple")),                      
+                ("paramList", (list,"list",list(),"info list")),
+            ])
         self.tc = TestClass()
     
     def tearDown(self):
@@ -26,14 +25,14 @@ class TestAbcModel(unittest.TestCase):
         pp = str(self.tc)
         print pp
         self.assertTrue(pp == """[TestClass]
-name:
-paramColor:blue
-paramBool:False
+name:defaultName
 name2:
-paramList:[]
+paramBool:False
+paramInt:0
 paramFloat:0.0
+paramColor:blue
 paramTuple:()
-paramInt:0""")
+paramList:[]""")
     
     def test_float(self):
         self.tc.set_paramFloat(4.5)
