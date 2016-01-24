@@ -1,16 +1,16 @@
 # -*-coding:Utf-8 -*
-
-import wx
 import matplotlib
-from wxPlotLab.graphics.GraphicCtlr import GraphicCtlr
 matplotlib.use('WXAgg')
-from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as CanvasPanel
+import wx
+from matplotlib.backends.backend_wxagg import \
+                    FigureCanvasWxAgg as CanvasPanel
 from matplotlib.figure import Figure
+from GraphicCtlr import GraphicCtlr
 from figureFactory import buildFigure
 
 class GraphicPanel(wx.Panel):
-    def __init__(self,*args,**kwargs):
-        wx.Panel.__init__(self,*args,**kwargs)
+    def __init__(self,parent):
+        wx.Panel.__init__(self,parent)
         
         # CANVAS & FIGURE MATPLOTLIB
         self.__figure = Figure()
@@ -20,7 +20,7 @@ class GraphicPanel(wx.Panel):
         self.__slide = None
         
         # GRAPHIC CONTROL
-        self.__graphicCtrl = GraphicCtlr(self.GetParent(),self.__canvas)
+        self.__graphicCtrl = GraphicCtlr(self.__canvas)
         
         # RESIZE
         sizer = wx.BoxSizer(wx.VERTICAL)
@@ -52,9 +52,8 @@ class GraphicPanel(wx.Panel):
     
     def build(self,*args,**kwargs):
         self.__figure.clear()
-        if self.__slide is None:
-            return
-        
-        buildFigure(self.__figure,self.__slide)
+        if not self.__slide is None:
+            buildFigure(self.__figure,self.__slide)
 
-
+    def control(self):
+        self.__graphicCtrl.control()

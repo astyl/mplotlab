@@ -1,4 +1,6 @@
 # -*-coding:Utf-8 -*
+
+from wxPlotLab import App
 from matplotlib.backend_bases import NavigationToolbar2
 
 import wx
@@ -17,15 +19,20 @@ cursord = {
 
 class Navigation(NavigationToolbar2):
     def __init__(self,*a,**k):
-        self.__mainWin = k.pop("mainWin")
         NavigationToolbar2.__init__(self, *a,**k)
         
     def _init_toolbar(self,*args,**kwargs):
         pass
     
     def set_message(self,s):        
-        self.__mainWin.GetStatusBar().SetStatusText(s,0)
-        
+        """ display in the status bar
+        the mouseover data (x,y) 
+        """        
+        try:
+            App().mainWin.GetStatusBar().SetStatusText(s,0)
+        except:
+            pass
+
     def set_cursor(self, cursor):
         cursor =wx.StockCursor(cursord[cursor])
         self.canvas.SetCursor( cursor )

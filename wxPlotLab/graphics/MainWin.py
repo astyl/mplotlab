@@ -1,10 +1,9 @@
 # -*-coding:Utf-8 -*
-
-from GraphicPanel import GraphicPanel
+from GraphicBook import GraphicBook
 from ConfigPanel import ConfigPanel
 from ShellPanel import ShellPanel
 from TreePanel import TreePanel
-
+from wxPlotLab.dataModel.Container import Container
 import wx.aui
 
 # menu
@@ -12,18 +11,20 @@ ID_CreatePerspective = wx.NewId()
 ID_FirstPerspective = ID_CreatePerspective+1000
 ID_About = wx.NewId()
 
+
 class MainWin(wx.Frame):
-    
+
     def __init__(self):
         wx.Frame.__init__(self, None, -1, 
                           title="wxPlotLab", 
                           size=(1200,675), 
                           style=wx.DEFAULT_FRAME_STYLE|wx.SUNKEN_BORDER|wx.CLIP_CHILDREN)
-        self.__graphicPanel = GraphicPanel(self)
+        # model container
+        self.__container = Container()
         # panels
-        
-        self.__treePanel= TreePanel(self,self.getFigure())
+        self.__graphicBook = GraphicBook(self)
         self.__configPanel= ConfigPanel(self)
+        self.__treePanel= TreePanel(self,self.__configPanel)
         self.__shellPanel = ShellPanel(self)   
         # tell FrameManager to manage this frame        
         self._mgr = wx.aui.AuiManager()
@@ -72,10 +73,9 @@ class MainWin(wx.Frame):
                           Left().Layer(1).Position(1).CloseButton(True).MaximizeButton(True))
 
         # create some center panes
-        self._mgr.AddPane(self.__graphicPanel, wx.aui.AuiPaneInfo().
-                          Name("html_content").Caption("graphicPanelC").
-                          CenterPane().Dockable(False).CloseButton(True).MaximizeButton(True))
-                                
+        self._mgr.AddPane(self.__graphicBook, wx.aui.AuiPaneInfo().CenterPane().
+                          Name("graphicBook").Caption("graphicBookC").Center().Floatable(True)
+                          .CloseButton(False).MaximizeButton(True))
 
         # make some default perspectives
         perspective_default = self._mgr.SavePerspective()
@@ -94,48 +94,33 @@ class MainWin(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnAbout, id=ID_About)
         self.Bind(wx.EVT_MENU_RANGE, self.OnRestorePerspective, id=ID_FirstPerspective,
                   id2=ID_FirstPerspective+1000)
-    
-    
-    def getCanvas(self):
-        return self.__graphicPanel.getCanvas()
-    
-    def getFigure(self):
-        return self.__graphicPanel.getFigure()
 
-    def build(self,*a,**k):
-        self.__graphicPanel.build(*a,**k)
-        self.onBuild()
+    def getContainer(self):
+        return self.__container
+ 
     
-    def onBuild(self):
-        self.__treePanel.updateTree()
-        dlocals = {
-            "app": wx.GetApp(),
-            "win": self,
-            "slide": self.getCurrentSlide(),
-            "figure": self.getFigure(),
-            "canvas": self.getCanvas(),            
-        }
-        self.__shellPanel.refreshLocals(dlocals)
-        self.updatePageConfig()
-    
-    def getCurrentSlide(self):
-        return self.__graphicPanel.getSlide()
-
-    def setSlide(self,slide):
-        self.__graphicPanel.setSlide(slide)
-
-    def draw(self,*a,**k):
-        self.__graphicPanel.draw(*a,**k)
+    def showSlideSel(self):
+        slide = self.__treePanel.getSlideSelected()
+        if not slide is None:
+            self.showSlide(slide)
         
-    def updatePageConfig(self):
-        self.__configPanel.updatePage(self.__treePanel.getModelSel())
-        
-    def getGraphicPanel(self):
-        return self.__graphicPanel
-    
-    def getGraphicCtrl(self):
-        return self.__graphicPanel.getGraphicCtrl()
+    def showSlide(self,slide):
+        # update Models
+        self.__container.register(slide)
+        # update Panels
+        self.__treePanel.updateTree() 
+        self.__graphicBook.updateBook()
+        self.__shellPanel.refreshLocals(slide=slide)
+        gp = self.__graphicBook.createGraphicPanel(slide)
+        # show interactive figure associated 
+        gp.build()    # matplotlib figure creation
+        gp.draw()     # matplotlib figure draw
+        gp.control()  # graphicControl enabling
 
+    ###########################    
+    ###########################    
+    ###########################    
+    
     def OnClose(self, event):
         self._mgr.UnInit()
         del self._mgr

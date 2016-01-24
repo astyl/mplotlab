@@ -15,7 +15,7 @@
 __version__  = '0.1'
 __date__     = '21/10/2015'
 
-import sys
+import sys, wx
 try:
     if not hasattr(sys, 'frozen'):
         import wxversion
@@ -24,6 +24,25 @@ except ImportError:
     pass
 except: # probably a useless exception from ensureMinimal() about wx already being Imported.
     pass
+
+
+# App (singleton)
+class App(wx.App):
+    __instance = None
+    def __new__(cls,*a,**k):
+        if cls.__instance is None:
+            cls.__instance = App.newApp(*a,**k)
+        return cls.__instance
+    
+    def __init__(self,*a,**k):  pass
+
+    @staticmethod
+    def newApp(*a,**k):
+        app = wx.App(*a,**k)
+        app.mainWin = newWxPlotFrame()
+        app.SetTopWindow(app.mainWin)
+        app.mainWin.Show()
+        return app
 
 # Utils
 from utils import log,\
@@ -43,8 +62,9 @@ from dataModel import Slide,\
                       Projection,\
                       Container
 
-# App
-from graphics import newWxPlotApp,\
-                     newWxPlotFrame,\
+# Graphics
+from graphics import newWxPlotFrame,\
                      newWxPlotPanel
+
+
 

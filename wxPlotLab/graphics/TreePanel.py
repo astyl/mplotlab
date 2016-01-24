@@ -1,10 +1,12 @@
 # -*-coding:Utf-8 -*
 
 import wx
+from wxPlotLab import App
+from wxPlotLab.dataModel import Slide
+from wxPlotLab.dataModel import AbcModel
 
 class TreePanel(wx.TreeCtrl):
-
-    def __init__(self,parent,figure):        
+    def __init__(self,parent,configPanel):        
         wx.TreeCtrl.__init__(self,parent, -1, wx.Point(0, 0), wx.Size(160, 250),
                        wx.TR_DEFAULT_STYLE | wx.NO_BORDER)
     
@@ -15,29 +17,48 @@ class TreePanel(wx.TreeCtrl):
         self.AssignImageList(imglist)
         self.Bind(wx.EVT_TREE_SEL_CHANGED, self.OnSelChanged, self)
         
-        self.__figure = figure
-        self.__mainWin = parent
         self.__modelSel = None
-        
-    def getModelSel(self):
-        return self.__modelSel
-        
+        self.__configPanel = configPanel
+
     def OnSelChanged(self,event):
         item = event.GetItem()
-        self.__modelSel = self.GetItemData(item).GetData()
-        self.__mainWin.updatePageConfig()
-        
+        a = self.GetItemData(item).GetData()
+        if isinstance(a,AbcModel):
+            self.__modelSel = a
+            self.__configPanel.updatePage(self.__modelSel)
+    
+    def getSlideSelected(self):
+        it = self.GetSelection()
+        if not it.IsOk():
+            return
+        k = 0
+        sliceSel = None
+        while k < 3:
+            sliceSel = self.GetItemPyData(it)
+            if isinstance(sliceSel,Slide):
+                break
+            else:
+                it = self.GetItemParent(it)
+            k +=1
+            
+        if k < 3:
+            return sliceSel
+            
+
     def updateTree(self):
         self.DeleteAllItems()
-        slide = self.__mainWin.getCurrentSlide()
-        if not slide is None:
-            root = self.AddRoot(slide.get_name(),data=wx.TreeItemData(slide))
-            if slide == self.__modelSel: self.SelectItem(root)
-    
+        root = self.AddRoot("container",data=wx.TreeItemData(self))
+        for slide in App().mainWin.getContainer().getSlides():
+            it = self.AppendItem(root, slide.get_name(), 0,data=wx.TreeItemData(slide))
+            if slide == self.__modelSel: self.SelectItem(it)
+               
             for projection in slide.get_projections():
-                it = self.AppendItem(root, projection.get_name(), 0,data=wx.TreeItemData(projection))
-                if projection == self.__modelSel: self.SelectItem(it)
+                itt = self.AppendItem(it, projection.get_name(), 0,data=wx.TreeItemData(projection))
+                if projection == self.__modelSel: self.SelectItem(itt)
                 
                 for collection in projection.get_collections():
-                    itt = self.AppendItem(it, collection.get_name(), 1,data=wx.TreeItemData(collection))
-                    if collection == self.__modelSel: self.SelectItem(itt)
+                    ittt = self.AppendItem(itt, collection.get_name(), 1,data=wx.TreeItemData(collection))
+                    if collection == self.__modelSel: self.SelectItem(ittt)
+                    
+                    
+                    

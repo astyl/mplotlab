@@ -4,6 +4,7 @@ import wx
 import wx.propgrid as wxpg
 from properties import propertyMap
 from wxPlotLab.utils import log
+from wxPlotLab import App
 from wxPlotLab.dataModel import AttributeTypes
 from matplotlib.colors import ColorConverter,rgb2hex
 
@@ -20,7 +21,6 @@ class ConfigPanel( wx.Panel ):
         self.but = wx.Button(self.panel,-1,"show")
         
         # DATA
-        self.__mainWin = parent
         self.__modelSel = None
                         
         # CFG
@@ -59,9 +59,8 @@ class ConfigPanel( wx.Panel ):
                 value = value.encode()
                 
             self.__modelSel.setAttr(name,value)
-         
-        self.__mainWin.build()
-        self.__mainWin.draw()
+
+        App().mainWin.showSlideSel()
         
     def updatePage(self,modelSel):
         if modelSel is None:

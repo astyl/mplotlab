@@ -11,11 +11,3 @@ def newWxPlotPanel(parent):
 from MainWin import MainWin
 def newWxPlotFrame():
     return MainWin()
-
-# Plot App
-def newWxPlotApp():
-    app = wx.App()
-    frame = newWxPlotFrame()
-    app.SetTopWindow(frame)
-    frame.Show()
-    return app

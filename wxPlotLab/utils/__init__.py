@@ -49,7 +49,8 @@ def checkTypeReturned(*aTypes):
             return res
         return fn2
     return deco    
-                
+
+            
 if __name__ == "__main__":
     
     print "# TEST 1"

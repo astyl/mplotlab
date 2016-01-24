@@ -13,20 +13,23 @@ class Container():
         self.flush()
 
     def flush(self):
-        self.__modelContainers.update({modelClass : {} \
+        self.__modelContainers.update({modelClass : [] \
                                 for modelClass in MODELCLASSES})
 
     def register(self,model):
         for modelClass in MODELCLASSES:
             if isinstance(model,modelClass):
-                name = model.get_name()
-                self.__modelContainers[modelClass][name]=model
+                ll = self.__modelContainers[modelClass]
+                if not model in ll:
+                    ll.append(model)
+                break
 
     def delete(self,model):
         for modelClass in MODELCLASSES:
             if isinstance(model,modelClass):
-                name = model.get_name()
-                del self.__modelContainers[modelClass][name]
+                ll = self.__modelContainers[modelClass]
+                if model in ll:
+                    del ll[ll.index(model)]
         del model
 
     def getVariables(self):

@@ -1,5 +1,6 @@
 # -*-coding:Utf-8 -*
 from wxPlotLab.utils import checkTypeReturned, checkTypeParams
+from copy import copy
 
 class AttributeTypes:
     # this class is only used as a simple enumeration
@@ -31,7 +32,7 @@ class AbcModel(object):
                                 "should be an instance of '%s' "%(name,vclass))
             
             # add attribute (ex: 'self._name')
-            setattr(self,"_"+name,value)
+            setattr(self,"_"+name,copy(value))
             # add attribute setter (ex: 'self.set_name('new_name')')
             setattr(self,"set_"+name,self.__createSetter(name,vclass,desc))
             # add attribute getter (ex: 'self.get_name()')
