@@ -27,14 +27,12 @@ except: # probably a useless exception from ensureMinimal() about wx already bei
 
 
 # App (singleton)
-class App(wx.App):
+class App(object):
     __instance = None
     def __new__(cls,*a,**k):
         if cls.__instance is None:
             cls.__instance = App.newApp(*a,**k)
         return cls.__instance
-    
-    def __init__(self,*a,**k):  pass
 
     @staticmethod
     def newApp(*a,**k):

@@ -16,14 +16,15 @@ class TestContainer(unittest.TestCase):
         cc.register(v1)
 
         dump1 = str(cc)
+        print cc
         cc.toxml("toto2.xml")
           
         cc = Container()
         cc.fromxml("toto2.xml")
         dump2 = str(cc)
-        
+        print cc
         self.assertTrue(dump1==dump2)
-
+ 
     def test_container2(self):
         cc = Container()
         v1 = Variable(name="v1")
@@ -41,7 +42,7 @@ class TestContainer(unittest.TestCase):
         s1 = Slide(name="s1",projections=[p1])
         s2 = Slide(name="s2",projections=[p2])
         s3 = Slide(name="s3",projections=[p1,p2])
-         
+          
         cc.register(v1)
         cc.register(v2)
         cc.register(v3)
@@ -61,14 +62,14 @@ class TestContainer(unittest.TestCase):
         self.assertTrue(len(cc.getProjections())==3)
         self.assertTrue(len(cc.getCollections())==4)
         self.assertTrue(len(cc.getVariables())==5)
-          
+           
         dump1 = str(cc)
         cc.toxml("toto3.xml")
-          
+           
         cc = Container()
         cc.fromxml("toto3.xml")
         dump2 = str(cc)
-        
+         
         print dump1
         self.assertTrue(dump1==dump2)
 

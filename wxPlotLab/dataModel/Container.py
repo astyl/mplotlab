@@ -1,19 +1,40 @@
 # -*-coding:Utf-8 -*
 
-from AbcModel import MODELS,AtypeRegister
+from AbcModel import AbcModel,MODELS
 from Variable import Variable
 from Collection import Collection
 from Projection import Projection
+from Source import Source
 from Slide import Slide
 import xml.etree.cElementTree as ET  
 
 
 class Container(object):
-    MODELCLASSES = [Variable,Collection,Projection,Slide]
+    MODELCLASSES = [Source,Variable,Collection,Projection,Slide]
+    REGCLASSES = {}
+
     def __init__(self):
         self.__modelsByClass = {}
         self.__modelsById = {}
         self.flush()
+        # Overload to pass the container instance for auto registration
+        self._setAutoRegistration()
+        
+    def _setAutoRegistration(self):
+        fn = AbcModel.__init__
+        def newInit(*a,**k):
+            k["container"]=self
+            return fn(*a,**k)
+        AbcModel.__init__ = newInit
+
+    @classmethod
+    def getAType(cls,name):
+        return cls.REGCLASSES[name]
+
+    @classmethod
+    def registerAType(cls,*clsL):
+        for _cls in clsL:
+            cls.REGCLASSES[_cls.__name__]=_cls
 
     def __str__(self,*a,**k):
         msg = ""
@@ -54,6 +75,7 @@ class Container(object):
                 if isinstance(model,modelClass):
                     ll = self.__modelsByClass[modelClass]
                     ll.append(model)
+                    model._set_container(self)
                     break
 
     def delete(self,model):
@@ -70,6 +92,9 @@ class Container(object):
 
     def getModel(self,m_id):
         return self.__modelsById.get(m_id,None)
+
+    def getSources(self):
+        return self.__modelsByClass[Source]
 
     def getVariables(self):
         return self.__modelsByClass[Variable]

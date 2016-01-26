@@ -27,8 +27,8 @@ def buildFigure(figure,slide):
         
         for collection in collections:
             # Collection
-            X = collection.get_X().get_data()
-            Y = collection.get_Y().get_data()
+            X = collection.get_X().getVariableData()
+            Y = collection.get_Y().getVariableData()
             pL = ["color","linestyle"]
             kw = { k: collection.getAttr(k) \
                                         for k in pL} 

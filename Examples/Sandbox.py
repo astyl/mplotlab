@@ -4,7 +4,8 @@ import numpy as np
 
 # src
 from wxPlotLab import App
-from wxPlotLab.dataModel import Variable,\
+from wxPlotLab.dataModel import Source,SourceExpression,\
+                                Variable,\
                                 Collection,\
                                 Projection,\
                                 Slide
@@ -30,22 +31,21 @@ def makeSlide():
     projections.append(projection)
     collections = projection.get_collections()
     
-    t = np.arange(0.0,3.0,0.1)
+    sourceT= SourceExpression(name="T",expression="np.arange(0.0,3.0,0.1)")
     collections.append(Collection(
         name = "collection1",
-        X = Variable(data=t),
-        Y = Variable(data=np.sin(2*np.pi*t)),
+        X = Variable(source=sourceT),
+        Y = Variable(formula="sin(2*pi*T)"),
         color = "blue",
         linestyle =  "-",
     ))
     collections.append(Collection(
         name = "collection2",
-        X = Variable(data=t),
-        Y = Variable(data=np.sin(2*np.pi*(t-.5))),
+        X = Variable(source=sourceT),
+        Y = Variable(formula="sin(2*pi*(T-0.5))"),
         color = "green",
         linestyle =  "-",
     ))
-    
     
     # projection 2
     projection = Projection(
@@ -61,11 +61,10 @@ def makeSlide():
     projections.append(projection)
     collections = projection.get_collections()
     
-    t = np.arange(0.0,3.0,0.1)
     collections.append(Collection(
         name = "collection3",
-        X = Variable(data=t),
-        Y = Variable(data=np.exp(t)),
+        X = Variable(source=sourceT),
+        Y = Variable(formula="exp(T)"),
         color = "red",
         linestyle =  "-",
     ))
@@ -74,11 +73,11 @@ def makeSlide():
 
 app = App()
 # SET SLIDE MODEL
-slide = makeSlide()
-slide2 = makeSlide()
-slide2.set_name("ee")
-print slide
-app.mainWin.showSlide(slide)
-app.mainWin.showSlide(slide2)
+# slide = makeSlide()
+# slide2 = makeSlide()
+# slide2.set_name("ee")
+# print slide
+# app.mainWin.showSlide(slide)
+# app.mainWin.showSlide(slide2)
 # GO :) 
 app.MainLoop()

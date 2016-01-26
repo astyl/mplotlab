@@ -2,7 +2,7 @@
 from wxPlotLab.utils import checkTypeReturned, checkTypeParams
 from copy import copy
 
-from AbcType import AType,AtypeRegister,STRING#,VECTOR
+from AbcType import AType,STRING#,VECTOR
 
 def NewModelId():
     res = NewModelId.id
@@ -21,13 +21,16 @@ class AbcModel(AType):
         ("name", (                  # attribute name
              str,                  # attribute value instance of
              STRING,               # attribute type 
-             "defaultName",        # attribute default value (can be None)
+             "",        # attribute default value (can be None)
              "name info"           # attribute short description
         )),
     ]
     
     def __init__(self,**k):
         self.__id = k.pop("__id_serialized",NewModelId())
+        self.__container = k.pop("container",None)
+        try: self.__container.register(self)
+        except: pass
         self.__properties = {}
         for name,infos in self.attributeInfos:
             vclass,vtype,value,desc = infos
@@ -45,6 +48,12 @@ class AbcModel(AType):
             self.__properties[name] = vtype
         ## Specialisation from dict arguments
         self.update(**k)
+
+    def get_container(self):
+        return self.__container
+
+    def _set_container(self,container):
+        self.__container=container
 
     def get_id(self):
         return self.__id
@@ -144,7 +153,8 @@ class AbcModel(AType):
 
 class MODELS(AType):
     typeClass = AbcModel
-    
+    containerStaticClass = None #Container to init
+
     @classmethod
     def populate(cls,name,abcModels,subEt,**k):
         for i,model in enumerate(abcModels):
@@ -157,6 +167,6 @@ class MODELS(AType):
     def fromxml(cls,et,**k):
         res=[]
         for subEt in et:
-            modelClass = AtypeRegister.getAType(subEt.tag)
+            modelClass = cls.containerStaticClass.getAType(subEt.tag)
             res.append(modelClass.fromxml(subEt,**k))
         return res

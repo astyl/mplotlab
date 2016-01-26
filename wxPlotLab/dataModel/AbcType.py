@@ -4,17 +4,6 @@ import xml.etree.cElementTree as ET
 import numpy as np
 import codecs
 
-class AtypeRegister(object):
-    __adict = {}
-    @staticmethod
-    def registerAType(*clsL):
-        for cls in clsL:
-            AtypeRegister.__adict[cls.__name__]=cls
-
-    @staticmethod
-    def getAType(name):
-        return AtypeRegister.__adict[name]
-
 class AType(object):
     ## default type associated for this value
     typeClass = str
@@ -139,21 +128,6 @@ class BOOL(AType):
     def fromstring(cls,text,**k):
         return text != u"0"
 
-# class NDARRAY(AType):
-#     @classmethod
-#     def toxml(cls,name,nparray,et,**k):
-#         subEt = cls.getSubEt(name,et,
-#                              dtype = nparray.dtype.name)
-#         cls.populate(name,nparray.tostring(),subEt,**k)
-#  
-#     @classmethod
-#     def tostring(cls,raw_str,**k):
-#         raw_unicode,_ = codecs.raw_unicode_escape_decode(raw_str)
-#         return raw_unicode
-#  
-#     @classmethod
-#     def fromstring(cls,raw_unicode,**k):
-#         raw_str,_ = codecs.raw_unicode_escape_encode(raw_unicode)
-#         return np.fromstring(raw_str,dtype=k["attr"].pop("dtype"))
+
 
 

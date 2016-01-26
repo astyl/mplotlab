@@ -3,23 +3,24 @@ from AbcType import FLOAT,\
                     STRING,\
                     COLOR,\
                     INT,\
-                    BOOL,\
-                    AtypeRegister
+                    BOOL
 
 from AbcModel import AbcModel,MODELS,NewModelId
+from Source import Source, SourceExpression,NDARRAY
 from Variable import Variable
 from Collection import Collection
 from Projection import Projection
 from Slide import Slide
 from Container import Container
 
-AtypeRegister.registerAType(\
-    FLOAT,STRING,COLOR,INT,BOOL, 
+Container.registerAType(\
+    FLOAT,STRING,COLOR,INT,BOOL,NDARRAY,
     AbcModel,MODELS,
+    Source, SourceExpression,
     Variable,
     Collection,
     Projection,
     Slide,
-Container)
-        
+    Container)
+MODELS.containerStaticClass=Container
                     

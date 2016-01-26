@@ -8,8 +8,7 @@ from wxPlotLab.dataModel import AbcModel,\
                                 STRING,\
                                 COLOR,\
                                 INT,\
-                                BOOL,\
-                                AtypeRegister
+                                BOOL, Container
 import numpy as np
 
 class TestAbcModel(unittest.TestCase):
@@ -106,25 +105,14 @@ color for class D
         tree = ET.ElementTree(file='toto.xml')
         root = tree.getroot()
           
-        class DumbContainer(object):
-            dico = {}
-            def getModel(self,mid):
-                return self.dico[mid]
-            def hasModel(self,mid): 
-                return self.dico.has_key(mid)
-            def register(self,model):
-                self.dico[model.get_id()]=model
-
-        container = DumbContainer()
-        AtypeRegister.registerAType(*self.CLASSES.values())
+        Container.registerAType(*self.CLASSES.values())
+        container = Container()
         for et in root:
             CModel = self.CLASSES[et.tag]
             model = CModel.fromxml(et,container=container)
             container.register(model)
           
-        for l in container.dico.values():
-            print l
-
+        print container
 if __name__ == '__main__':
     unittest.main()
 

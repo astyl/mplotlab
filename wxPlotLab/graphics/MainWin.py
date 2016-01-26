@@ -4,13 +4,14 @@ from ConfigPanel import ConfigPanel
 from ShellPanel import ShellPanel
 from TreePanel import TreePanel
 from wxPlotLab.dataModel.Container import Container
-import wx.aui
+import wx.aui,os
 
 # menu
+ID_SaveXml = wx.NewId()
+ID_LoadXml = wx.NewId()
 ID_CreatePerspective = wx.NewId()
 ID_FirstPerspective = ID_CreatePerspective+1000
 ID_About = wx.NewId()
-
 
 class MainWin(wx.Frame):
 
@@ -38,6 +39,8 @@ class MainWin(wx.Frame):
         mb = wx.MenuBar()
 
         file_menu = wx.Menu()
+        file_menu.Append(ID_LoadXml, "Load Xml")
+        file_menu.Append(ID_SaveXml, "Save Xml")
         file_menu.Append(wx.ID_EXIT, "Exit")
 
         self._perspectives_menu = wx.Menu()
@@ -89,6 +92,8 @@ class MainWin(wx.Frame):
         self.Bind(wx.EVT_CLOSE, self.OnClose)
         
         # menuBar
+        self.Bind(wx.EVT_MENU, self.OnLoadXml, id=ID_LoadXml)
+        self.Bind(wx.EVT_MENU, self.OnSaveXml, id=ID_SaveXml)
         self.Bind(wx.EVT_MENU, self.OnCreatePerspective, id=ID_CreatePerspective)
         self.Bind(wx.EVT_MENU, self.OnExit, id=wx.ID_EXIT)
         self.Bind(wx.EVT_MENU, self.OnAbout, id=ID_About)
@@ -105,8 +110,6 @@ class MainWin(wx.Frame):
             self.showSlide(slide)
         
     def showSlide(self,slide):
-        # update Models
-        self.__container.register(slide)
         # update Panels
         self.__treePanel.updateTree() 
         self.__graphicBook.updateBook()
@@ -121,6 +124,27 @@ class MainWin(wx.Frame):
     ###########################    
     ###########################    
     
+    def OnLoadXml(self,event):
+        dlg = wx.FileDialog(
+            self, message="Choose a file",
+            defaultDir=os.getcwd(), 
+            defaultFile="",
+            wildcard="All files (*.*)|*.*",
+            style=wx.OPEN | wx.MULTIPLE | wx.CHANGE_DIR
+            )
+        if dlg.ShowModal() == wx.ID_OK:
+            self.__container.flush()
+            self.__container.fromxml(dlg.GetPath())
+            self.showSlide(self.__container.getSlides()[0])
+
+    def OnSaveXml(self,event):
+        dlg = wx.FileDialog(
+            self, message="Save file as ...", defaultDir=os.getcwd(), 
+            defaultFile="", wildcard="All files (*.*)|*.*", style=wx.SAVE
+            )
+        if dlg.ShowModal() == wx.ID_OK:
+            self.__container.toxml(dlg.GetPath())
+
     def OnClose(self, event):
         self._mgr.UnInit()
         del self._mgr
