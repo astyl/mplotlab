@@ -1,12 +1,11 @@
 # -*-coding:Utf-8 -*
 
-from AbcModel import AbcModel,AttributeTypes
+from AbcModel import AbcModel,MODELS
+from AbcType import STRING
 
 class Slide(AbcModel):
     attributeInfos = list(AbcModel.attributeInfos)
     attributeInfos.extend([ 
-        ("title", (str,AttributeTypes.STRING,"","figure title")),
-        ("projections", (list,AttributeTypes.MODEL,[],"projections")),
+        ("title", (str,STRING,"","figure title")),
+        ("projections", (list,MODELS,[],"projections")),
     ])
-    
-    

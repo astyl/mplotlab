@@ -5,7 +5,7 @@ import wx.propgrid as wxpg
 from properties import propertyMap
 from wxPlotLab.utils import log
 from wxPlotLab import App
-from wxPlotLab.dataModel import AttributeTypes
+from wxPlotLab.dataModel import COLOR
 from matplotlib.colors import ColorConverter,rgb2hex
 
 class ConfigPanel( wx.Panel ):
@@ -50,7 +50,7 @@ class ConfigPanel( wx.Panel ):
         
         for name,value in self.pg.GetPropertyValues().items():
             ## To be handled by custom property 
-            if AttributeTypes.COLOR == self.__modelSel.getProperties()[name]:
+            if COLOR == self.__modelSel.getProperties()[name]:
                 r,g,b = value.Get()
                 value = r/255.,g/255.,b/255.
                 value = rgb2hex(value)            

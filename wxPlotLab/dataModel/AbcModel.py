@@ -2,28 +2,32 @@
 from wxPlotLab.utils import checkTypeReturned, checkTypeParams
 from copy import copy
 
-class AttributeTypes:
-    # this class is only used as a simple enumeration
-    STRING, \
-    COLOR,NDARRAY,INT,FLOAT,MODEL,BOOL \
-        = list(range(7))
+from AbcType import AType,AtypeRegister,STRING#,VECTOR
 
-class AbcModel(object):
+def NewModelId():
+    res = NewModelId.id
+    NewModelId.id +=1
+    return res
+NewModelId.id=0
+
+class AbcModel(AType):
     """ Abstract class representing a model element.
-    Use the parameter 'attributeInfos' to auto generate 
-    its properties.
+    For derived class, use the parameter 'attributeInfos' to auto generate 
+    its properties 
     """
+    __id = None 
     attributeInfos = [ 
         # attribute definition
         ("name", (                  # attribute name
              str,                  # attribute value instance of
-             AttributeTypes.STRING, # attribute type (from enum AttributeTypes)
+             STRING,               # attribute type 
              "defaultName",        # attribute default value (can be None)
              "name info"           # attribute short description
         )),
     ]
     
     def __init__(self,**k):
+        self.__id = k.pop("__id_serialized",NewModelId())
         self.__properties = {}
         for name,infos in self.attributeInfos:
             vclass,vtype,value,desc = infos
@@ -42,9 +46,43 @@ class AbcModel(object):
         ## Specialisation from dict arguments
         self.update(**k)
 
+    def get_id(self):
+        return self.__id
+
+    @staticmethod
+    def getSubEt(clsname,parameter,model,et,**attr):
+        return AType.getSubEt(clsname,parameter,model,et,
+                              id=str(model.get_id()),
+                              name=model.get_name(),
+                              **attr)
+
+    @classmethod
+    def populate(cls,parameter,self,subEt,parseModel=False):
+        if parseModel:
+            for name,aType in self.__properties.items():
+                value = self.getAttr(name)
+                aType.toxml(name,value,subEt,parseModel=False)
+
+    @classmethod
+    def fromxml(cls, et, **k):
+        container = k.get("container")
+        name = et.tag
+        m_id = int(et.attrib.get("id"))
+        if container.hasModel(m_id):
+            return container.getModel(m_id)
+        else:
+            infos = {name:vType for name,(_,vType,_,_) in cls.attributeInfos}
+            params = {"__id_serialized":m_id}
+            for subEt in et:
+                name = subEt.attrib["parameter"]
+                vType = infos[name]
+                params[name] = vType.fromxml(subEt, **k)
+            new_model = cls(**params)
+            return new_model
+
     def getProperties(self):
         return self.__properties
-        
+
     def update(self,**k):
         """ update the model from dict arguments
         ex: self.update(name="toto",size=170)
@@ -67,11 +105,22 @@ class AbcModel(object):
         self.__checkAttrName(name)
         return getattr(self,"get_"+name)()
 
-    def __str__(self):
-        msgT = ["[%s]"%self.__class__.__name__]
-        msgL = ["%s:%s" % (name,self.getAttr(name))
-                                for name,_ in self.attributeInfos]
-        return "\n".join(msgT+msgL)
+    def __str__(self,it=""):
+        m_id = self.get_id()
+        msgT = [it+"[%s] ID:%d"%(self.__class__.__name__,m_id)]
+        msgL = []
+        for name,(_,vType,_,_) in self.attributeInfos:
+            value = self.getAttr(name)
+            if issubclass(vType, AbcModel):
+                value = value.__str__(it+"\t")
+            elif issubclass(vType, MODELS):
+                sep = "\n"+it+"\t"+"-"*25
+                value = sep.join(\
+                     map(lambda x:x.__str__(it+"\t"),value)\
+                     +["\n"]\
+                     )
+            msgL.append(it+"%s:%s" % (name,value))
+        return "\n"+"\n".join(msgT+msgL)
 
     def __createSetter(self,name,vclass,desc):
         @checkTypeParams(vclass)
@@ -93,3 +142,21 @@ class AbcModel(object):
 """.format(name=name,vclass=vclass,desc=desc)
         return getterFn
 
+class MODELS(AType):
+    typeClass = AbcModel
+    
+    @classmethod
+    def populate(cls,name,abcModels,subEt,**k):
+        for i,model in enumerate(abcModels):
+            modelClass = model.__class__
+            if not issubclass(modelClass,cls.typeClass):
+                raise Exception()
+            modelClass.toxml(name+"%d"%i,model,subEt,**k)
+
+    @classmethod
+    def fromxml(cls,et,**k):
+        res=[]
+        for subEt in et:
+            modelClass = AtypeRegister.getAType(subEt.tag)
+            res.append(modelClass.fromxml(subEt,**k))
+        return res

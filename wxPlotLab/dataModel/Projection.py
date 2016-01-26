@@ -1,16 +1,18 @@
 # -*-coding:Utf-8 -*
 
-from AbcModel import AbcModel,AttributeTypes
+from AbcModel import AbcModel,MODELS
+from AbcType import FLOAT,STRING
+
 
 class Projection(AbcModel):
     attributeInfos = list(AbcModel.attributeInfos)
     attributeInfos.extend([ 
-        ("collections", (list,AttributeTypes.MODEL,[],"collections")),
-        ("xlabel", (str,AttributeTypes.STRING,"","axes xlabel")),
-        ("ylabel", (str,AttributeTypes.STRING,"","axes ylabel")),
-        ("xmin", (float,AttributeTypes.FLOAT,0.0,"axes xmin")),
-        ("xmax", (float,AttributeTypes.FLOAT,5.0,"axes xmax")),
-        ("ymin", (float,AttributeTypes.FLOAT,0.0,"axes ymin")),
-        ("ymax", (float,AttributeTypes.FLOAT,5.0,"axes ymax")),
+        ("collections", (list,MODELS,[],"collections")),
+        ("xlabel", (str,STRING,"","axes xlabel")),
+        ("ylabel", (str,STRING,"","axes ylabel")),
+        ("xmin", (float,FLOAT,0.0,"axes xmin")),
+        ("xmax", (float,FLOAT,5.0,"axes xmax")),
+        ("ymin", (float,FLOAT,0.0,"axes ymin")),
+        ("ymax", (float,FLOAT,5.0,"axes ymax")),
     ])
     
