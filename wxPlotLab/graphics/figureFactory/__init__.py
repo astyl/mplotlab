@@ -1,5 +1,21 @@
 # -*-coding:Utf-8 -*
 from matplotlib.lines import Line2D
+from matplotlib.animation import ArtistAnimation as AA
+
+class ArtistAnimation(AA):
+
+    def updateArtists(self,artists):
+        print "updating artists %s ...."%artists
+        for line in artists:
+            collection = line.abcModel
+            line.set_xdata(collection.get_X().getVariableData())
+            line.set_ydata(collection.get_Y().getVariableData())
+        return artists
+
+    def _step(self, *a,**k):
+        artists = self._framedata[0]
+        self.updateArtists(artists)
+        AA._step(self,*a,**k)
 
 def buildFigure(figure,slide):
     # Slide
@@ -9,6 +25,7 @@ def buildFigure(figure,slide):
     figure.suptitle(title)
     figure.abcModel = slide
     
+    animatedArtists = []
     # Projection
     for i,projection in enumerate(projections):
         collections = projection.get_collections()
@@ -35,7 +52,16 @@ def buildFigure(figure,slide):
             
             line = Line2D(X,Y,**kw)
             axes.add_line(line)
-            
             line.abcModel = collection
             
-                
+            if collection.get_animation():
+                animatedArtists.append(line)
+    
+    if len(animatedArtists)>0:
+        if hasattr(figure,"ani"):
+            figure.ani._stop()
+        figure.ani = ArtistAnimation(figure, [animatedArtists], interval=100, blit=True,
+                                repeat_delay=0)
+
+
+

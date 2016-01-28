@@ -1,8 +1,7 @@
 # -*-coding:Utf-8 -*
 
 import wx
-
-# Plot Panel
+# Plot Panel111
 from GraphicPanel import GraphicPanel
 def newWxPlotPanel(parent):
     return GraphicPanel(parent)

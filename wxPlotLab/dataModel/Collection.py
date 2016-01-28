@@ -3,7 +3,8 @@
 from AbcModel import AbcModel
 from Variable import Variable
 from AbcType import COLOR ,\
-                    STRING
+                    STRING,\
+                    BOOL
 
 class Collection(AbcModel):
     attributeInfos = list(AbcModel.attributeInfos)
@@ -12,4 +13,5 @@ class Collection(AbcModel):
         ("Y", (Variable,Variable,Variable(),"var Y")),
         ("color", (str,COLOR,"blue","artist color")),
         ("linestyle",  (str,STRING,"-","linestyle")),
+        ("animation",(bool,BOOL,False,"enable artist animation"))
     ])

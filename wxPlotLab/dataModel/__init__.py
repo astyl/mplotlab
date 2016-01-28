@@ -6,7 +6,7 @@ from AbcType import FLOAT,\
                     BOOL
 
 from AbcModel import AbcModel,MODELS,NewModelId
-from Source import Source, SourceExpression,NDARRAY
+from Source import Source, SourceExpression,SourceSocket,NDARRAY
 from Variable import Variable
 from Collection import Collection
 from Projection import Projection
@@ -16,11 +16,11 @@ from Container import Container
 Container.registerAType(\
     FLOAT,STRING,COLOR,INT,BOOL,NDARRAY,
     AbcModel,MODELS,
-    Source, SourceExpression,
+    Source, SourceExpression,SourceSocket,
     Variable,
     Collection,
     Projection,
     Slide,
     Container)
 MODELS.containerStaticClass=Container
-                    
+                
