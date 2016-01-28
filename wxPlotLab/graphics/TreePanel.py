@@ -33,7 +33,7 @@ class TreePanel(wx.TreeCtrl):
             return
         k = 0
         sliceSel = None
-        while k < 3:
+        while k < 5:
             sliceSel = self.GetItemPyData(it)
             if isinstance(sliceSel,Slide):
                 break
@@ -41,7 +41,7 @@ class TreePanel(wx.TreeCtrl):
                 it = self.GetItemParent(it)
             k +=1
             
-        if k < 3:
+        if k < 5:
             return sliceSel
             
 
@@ -60,5 +60,12 @@ class TreePanel(wx.TreeCtrl):
                     ittt = self.AppendItem(itt, collection.get_name(), 1,data=wx.TreeItemData(collection))
                     if collection == self.__modelSel: self.SelectItem(ittt)
                     
-                    
-                    
+                    for variable in [collection.get_X(),collection.get_Y()]:
+                        itttt = self.AppendItem(ittt, variable.get_name(), 1,data=wx.TreeItemData(variable))
+                        if variable == self.__modelSel: self.SelectItem(itttt)
+                        
+                        for source in [variable.get_source()]:
+                            ittttt = self.AppendItem(itttt, source.get_name(), 1,data=wx.TreeItemData(source))
+                            if source == self.__modelSel: self.SelectItem(ittttt)
+                        
+                        

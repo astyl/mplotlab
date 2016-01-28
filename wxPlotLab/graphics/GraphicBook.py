@@ -32,7 +32,6 @@ class GraphicBook(wx.Panel):
             if not s in cs.keys():
                 # None nor unregistered slide from the container
                 self.__book.DeletePage(i)
-                gp.Destroy()
             else:
                 self.__book.SetPageText(i,cs[s])
     

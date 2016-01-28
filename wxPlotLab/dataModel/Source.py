@@ -51,7 +51,7 @@ class SourceExpression(Source):
         """ Initialize values """
         values = eval(self.get_expression())
         self.set_values(values)
-        Source.init(self)
+#         Source.init(self)
 
 class SourceSocket(Source):
     attributeInfos = list(Source.attributeInfos)

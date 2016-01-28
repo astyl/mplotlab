@@ -6,21 +6,21 @@ from wx.propgrid import ColourProperty,\
                         FloatProperty,\
                         IntProperty,\
                         StringProperty
-from wxPlotLab.dataModel import COLOR,STRING,INT,FLOAT,BOOL,MODELS,Variable
+from wxPlotLab.dataModel import COLOR,STRING,INT,FLOAT,BOOL,MODELS,Variable,Source,NDARRAY
 # class :
 #     # this class is only used as a simple enumeration
 #     STRING,COLOR,NDARRAY,INT,FLOAT,MODEL= list(range(6))
 # from wxPlotLab.dataModel import AbcModel,
 
 propertyMap = {
-#     NDARRAY: PyObjectProperty,
     COLOR: ColourProperty,   
-#     MODEL: PyObjectProperty,
     STRING:StringProperty,
     BOOL:BoolProperty,
     INT:IntProperty,
     FLOAT:FloatProperty,
     MODELS:PyObjectProperty, 
-    Variable:PyObjectProperty,     
+    Variable:PyObjectProperty,   
+    Source:PyObjectProperty,     
+    NDARRAY:PyObjectProperty,      
 }
 

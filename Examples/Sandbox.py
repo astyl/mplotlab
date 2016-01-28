@@ -11,7 +11,7 @@ from wxPlotLab.dataModel import Source,SourceExpression,\
                                 Slide
 
 # DATA MODEL
-def makeSlide():
+def makeSlide(source):
     slide = Slide(
         name = "slide",
         title = "test title slide ",
@@ -30,18 +30,17 @@ def makeSlide():
     )
     projections.append(projection)
     collections = projection.get_collections()
-    
-    sourceT= SourceExpression(name="T",expression="np.arange(0.0,3.0,0.1)")
+
     collections.append(Collection(
         name = "collection1",
-        X = Variable(source=sourceT),
+        X = Variable(source=source),
         Y = Variable(formula="sin(2*pi*T)"),
         color = "blue",
         linestyle =  "-",
     ))
     collections.append(Collection(
         name = "collection2",
-        X = Variable(source=sourceT),
+        X = Variable(source=source),
         Y = Variable(formula="sin(2*pi*(T-0.5))"),
         color = "green",
         linestyle =  "-",
@@ -63,7 +62,7 @@ def makeSlide():
     
     collections.append(Collection(
         name = "collection3",
-        X = Variable(source=sourceT),
+        X = Variable(source=source),
         Y = Variable(formula="exp(T)"),
         color = "red",
         linestyle =  "-",
@@ -72,12 +71,13 @@ def makeSlide():
 
 
 app = App()
-# SET SLIDE MODEL
-# slide = makeSlide()
-# slide2 = makeSlide()
-# slide2.set_name("ee")
+# SET SLIDE MODEL  
+# sourceT= SourceExpression(name="T",expression="np.arange(0.0,3.0,0.1)")
+# slide = makeSlide(sourceT)
+# slide2 = makeSlide(sourceT)
+# slide2.set_name("slide 2")
 # print slide
 # app.mainWin.showSlide(slide)
 # app.mainWin.showSlide(slide2)
-# GO :) 
+# # GO :) 
 app.MainLoop()

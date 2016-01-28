@@ -31,16 +31,17 @@ def buildFigure(figure,slide):
         collections = projection.get_collections()
         xlabel = projection.get_xlabel()
         ylabel = projection.get_ylabel()
+        autolim = projection.get_autolim()
         xlim = projection.get_xmin(),projection.get_xmax()
         ylim = projection.get_ymin(),projection.get_ymax()
         
+        
         axes = figure.add_subplot(len(projections),1,i+1)
         axes.set_xlabel(xlabel)
-        axes.set_ylabel(ylabel)
-        axes.set_xlim(xlim)
-        axes.set_ylim(ylim)
+        axes.set_ylabel(ylabel)       
 
         axes.abcModel = projection
+        projection.axes = axes
         
         for collection in collections:
             # Collection
@@ -50,13 +51,19 @@ def buildFigure(figure,slide):
             kw = { k: collection.getAttr(k) \
                                         for k in pL} 
             
-            line = Line2D(X,Y,**kw)
-            axes.add_line(line)
+            line,=axes.plot(X,Y,**kw)
             line.abcModel = collection
             
             if collection.get_animation():
                 animatedArtists.append(line)
-    
+
+        if not autolim:
+            axes.set_xlim(xlim)
+            axes.set_ylim(ylim)
+        else:
+            axes.set_xlim()
+            axes.set_ylim() 
+
     if len(animatedArtists)>0:
         if hasattr(figure,"ani"):
             figure.ani._stop()
