@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from setuptools import find_packages
 from distutils.core import setup
 
 version = "0.1"
@@ -36,5 +35,10 @@ setup(name = 'mplotlab',
                    'Programming Language :: Python',
                    'Topic :: Scientific/Engineering',
                    'Topic :: Scientific/Engineering :: Visualization'],
-      packages = find_packages(),
+      packages = ['mplotlab',
+                  'mplotlab.dataModel',
+                  'mplotlab.graphics',
+                  'mplotlab.graphics.figureFactory',
+                  'mplotlab.graphics.properties',
+                  'mplotlab.utils'],
 )

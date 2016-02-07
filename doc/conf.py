@@ -95,7 +95,7 @@ pygments_style = 'sphinx'
 # Sphinx are currently 'default' and 'sphinxdoc'.
 html_theme = 'default'
 
-html_theme = 'sphinxdoc'
+html_theme = 'sphinx_rtd_theme'
 
 # html_theme = 'nature'
 # html_theme = 'agogo'
