@@ -4,17 +4,17 @@ import numpy as np
 
 # src
 from mplotlab import App
-from mplotlab.dataModel import Source,SourceExpression,SourceSocket,\
+from mplotlab.models import SourceSocket,\
                                 Variable,\
                                 Collection,\
                                 Projection,\
                                 Slide
 
 # DATA MODEL
-def makeSlide(sourceT):
+def makeSlide1(sourceT):
     slide = Slide(
-        name = "slide",
-        title = "test title slide ",
+        name = "slide1",
+        title = "slide1",
     )
     projections = slide.get_projections()
     # projection 1
@@ -23,10 +23,10 @@ def makeSlide(sourceT):
         xlabel = "xlabel projection 1 ",
         ylabel = "ylabel projection 1 ",
         collections = [],
-        xmin = 0.,
-        xmax = 3.,
-        ymin = -1. ,
-        ymax  = 1.
+        xmin = 0.0,
+        xmax = 15.0,
+        ymin = -1.4,
+        ymax  = 1.4,
     )
     projections.append(projection)
     collections = projection.get_collections()
@@ -45,19 +45,25 @@ def makeSlide(sourceT):
         X = Variable(source=sourceT),
         Y = Variable(formula="sin(2*pi*(T-0.5))"),
         color = "green",
-        linestyle =  "-",
+        linestyle =  "--",
     ))
-    
-    # projection 2
+    return slide
+
+def makeSlide2(sourceT):    
+    slide = Slide(
+        name = "slide2",
+        title = "slide2",
+    )
+    projections = slide.get_projections()
     projection = Projection(
         name = "projection2",
         xlabel = "xlabel projection 2 ",
         ylabel = "ylabel projection 2 ",
         collections = [],
-        xmin = 0.,
-        xmax = 3.,
-        ymin = np.exp(0),
-        ymax = np.exp(3)
+        xmin = 0.0,
+        xmax = 15.0,
+        ymin = -10.0 ,
+        ymax  = 10.0,
     )
     projections.append(projection)
     collections = projection.get_collections()
@@ -66,23 +72,25 @@ def makeSlide(sourceT):
         animation=True,
         name = "collection3",
         X = Variable(source=sourceT),
-        Y = Variable(formula="exp(T)"),
+        Y = Variable(formula="tan(T)"),
         color = "red",
         linestyle =  "-",
     ))
     return slide
 
 app = App()
-# SET SLIDE MODEL
-# sourceT= SourceSocket(name="T",
-#                       host="localhost",
-#                       port=50981,
-#                       buffsize=9999999,
-#                       period=50) 
-# slide = makeSlide(sourceT)
-# slide2 = makeSlide(sourceT)
-# slide2.set_name("ee")
-# app.mainWin.showSlide(slide)
-# app.mainWin.showSlide(slide2)
+# Here, I create and configure a socket source that will enable a server communication.
+# Then fetched data will update source values every 50ms (tweakable).
+# Simultaneously, slide animation will update its artists every second (hardcoded value..)
+sourceT= SourceSocket(name="T",
+                      host="localhost",
+                      port=50981,
+                      buffsize=9999999,
+                      period=50) 
+slide1 = makeSlide1(sourceT)
+slide2 = makeSlide2(sourceT)
+ 
+app.mainWin.showSlide(slide1)
+app.mainWin.showSlide(slide2)
 # GO :) 
 app.MainLoop()

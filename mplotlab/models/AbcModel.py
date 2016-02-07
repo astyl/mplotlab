@@ -11,7 +11,8 @@ def NewModelId():
 NewModelId.id=0
 
 class AbcModel(AType):
-    """ Abstract class representing a model element.
+    """ 
+    Abstract class representing a model element.
     For derived class, use the parameter 'attributeInfos' to auto generate 
     its properties 
     """
@@ -93,7 +94,8 @@ class AbcModel(AType):
         return self.__properties
 
     def update(self,**k):
-        """ update the model from dict arguments
+        """ 
+        update the model from dict arguments
         ex: self.update(name="toto",size=170)
         """
         for name, value in k.items():
@@ -104,7 +106,8 @@ class AbcModel(AType):
             raise Exception("Attribute %s doesn't exist" % name)
 
     def setAttr(self,name,value):
-        """ set the value of an attribute 
+        """ 
+        set the value of an attribute 
         ex : self.setAttr("name",value)
         """
         self.__checkAttrName(name)

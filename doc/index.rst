@@ -20,9 +20,14 @@ Thus, it allows GUI users to edit, save and load figures without typing any line
 
 **Mplotlab** is closely modelled on the excellent project `wxmplot`_ developped by Matt Newville
 
+.. image:: images/slide_dynamic_example.gif
 
 .. toctree::
    :maxdepth: 2
 
    installation
-   abcModel
+   mplotlab.models
+   mplotlab.mpl_builders
+   mplotlab.graphics
+   mplotlab.utils
+   examples

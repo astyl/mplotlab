@@ -9,7 +9,8 @@ import wx
 class NDARRAY(AType):
     @classmethod
     def toxml(*a,**k):
-        """ values aren't serialized as any parameter.
+        """ 
+        values aren't serialized as any parameter.
         They are generated from source handlers such as
         expression, files or remote data streams
         """

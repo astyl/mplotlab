@@ -3,7 +3,7 @@ from GraphicBook import GraphicBook
 from ConfigPanel import ConfigPanel
 from ShellPanel import ShellPanel
 from TreePanel import TreePanel
-from mplotlab.dataModel.Container import Container
+from mplotlab.models.Container import Container
 import wx.aui,os
 
 # menu

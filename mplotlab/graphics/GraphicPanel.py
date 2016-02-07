@@ -6,7 +6,7 @@ from matplotlib.backends.backend_wxagg import \
                     FigureCanvasWxAgg as CanvasPanel
 from matplotlib.figure import Figure
 from GraphicCtlr import GraphicCtlr
-from figureFactory import buildFigure
+from mplotlab.mpl_builders.mpl_figures import buildFigure
 
 class GraphicPanel(wx.Panel):
     def __init__(self,parent):

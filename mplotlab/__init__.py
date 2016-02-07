@@ -54,7 +54,7 @@ from utils import log,\
                   checkTypeReturned
 
 # Models
-from dataModel import Slide,\
+from mplotlab.models import Slide,\
                       Variable,\
                       Collection,\
                       Projection,\

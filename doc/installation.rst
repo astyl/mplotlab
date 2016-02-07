@@ -17,7 +17,7 @@ Downloads
 The latest version is available from `PyPI`_ or `github`_, and the package
 can be installed with::
 
-   pip install wxmplot
+   pip install mplotlab
 
 Development Version
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -44,7 +44,7 @@ The mplotlab code is distribution under the following license:
 
   The MIT License (MIT)
   
-  Copyright (c) 2015 wxPlotLab by Andre ASTYL
+  Copyright (c) 2016 mplotlab by Andre ASTYL
   
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal

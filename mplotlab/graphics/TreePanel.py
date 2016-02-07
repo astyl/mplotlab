@@ -2,8 +2,8 @@
 
 import wx
 from mplotlab import App
-from mplotlab.dataModel import Slide
-from mplotlab.dataModel import AbcModel
+from mplotlab.models import Slide
+from mplotlab.models import AbcModel
 
 class TreePanel(wx.TreeCtrl):
     def __init__(self,parent,configPanel):        

@@ -2,10 +2,10 @@
 
 import wx
 import wx.propgrid as wxpg
-from properties import propertyMap
+from mplotlab.graphics import propertyMap
 from mplotlab.utils import log
 from mplotlab import App
-from mplotlab.dataModel import COLOR
+from mplotlab.models import COLOR
 from matplotlib.colors import ColorConverter,rgb2hex
 
 class ConfigPanel( wx.Panel ):

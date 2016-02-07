@@ -4,7 +4,7 @@ import numpy as np
 
 # src
 from mplotlab import App
-from mplotlab.dataModel import Source,SourceExpression,\
+from mplotlab.models import SourceExpression,\
                                 Variable,\
                                 Collection,\
                                 Projection,\
@@ -43,7 +43,7 @@ def makeSlide(source):
         X = Variable(source=source),
         Y = Variable(formula="sin(2*pi*(T-0.5))"),
         color = "green",
-        linestyle =  "-",
+        linestyle =  "--",
     ))
     
     # projection 2
@@ -51,6 +51,7 @@ def makeSlide(source):
         name = "projection2",
         xlabel = "xlabel projection 2 ",
         ylabel = "ylabel projection 2 ",
+        autolim = True,
         collections = [],
         xmin = 0.,
         xmax = 3.,
@@ -63,21 +64,17 @@ def makeSlide(source):
     collections.append(Collection(
         name = "collection3",
         X = Variable(source=source),
-        Y = Variable(formula="exp(T)"),
+        Y = Variable(formula="tan(T)"),
         color = "red",
         linestyle =  "-",
     ))
     return slide
 
-
+# Create the mplotlab application
 app = App()
-# SET SLIDE MODEL  
-# sourceT= SourceExpression(name="T",expression="np.arange(0.0,3.0,0.1)")
-# slide = makeSlide(sourceT)
-# slide2 = makeSlide(sourceT)
-# slide2.set_name("slide 2")
-# print slide
-# app.mainWin.showSlide(slide)
-# app.mainWin.showSlide(slide2)
-# # GO :) 
+# the source is described by an numpy expression 
+sourceT= SourceExpression(name="T",expression="np.arange(0.0,3.0,0.1)")
+slide = makeSlide(sourceT)
+app.mainWin.showSlide(slide)
+# GO :) 
 app.MainLoop()

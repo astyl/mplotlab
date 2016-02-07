@@ -79,7 +79,8 @@ class AType(object):
 
     @classmethod
     def fromxml(cls,et,**k):
-        """ Return the attribute value
+        """ 
+        Return the attribute value
         @param et: Element
             element tree to decode
         @param k: dict
@@ -95,7 +96,8 @@ class AType(object):
 
     @classmethod
     def fromstring(cls,text,attr={},**k):
-        """ Return the value from parsed unicode
+        """ 
+        Return the value from parsed unicode
         @param text: unicode 
             text of element tree
         @param attr: dict

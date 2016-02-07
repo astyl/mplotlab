@@ -1,4 +1,10 @@
 # -*-coding:Utf-8 -*
+"""
+TOTO
+   
+"""
+
+
 from AbcType import FLOAT,\
                     STRING,\
                     COLOR,\
