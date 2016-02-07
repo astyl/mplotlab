@@ -1,6 +1,6 @@
 # -*-coding:Utf-8 -*
 
-from wxPlotLab import App
+from mplotlab import App
 from matplotlib.backend_bases import NavigationToolbar2
 
 import wx

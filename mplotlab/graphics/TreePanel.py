@@ -1,9 +1,9 @@
 # -*-coding:Utf-8 -*
 
 import wx
-from wxPlotLab import App
-from wxPlotLab.dataModel import Slide
-from wxPlotLab.dataModel import AbcModel
+from mplotlab import App
+from mplotlab.dataModel import Slide
+from mplotlab.dataModel import AbcModel
 
 class TreePanel(wx.TreeCtrl):
     def __init__(self,parent,configPanel):        

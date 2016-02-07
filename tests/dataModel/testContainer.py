@@ -1,7 +1,7 @@
 # -*-coding:Utf-8 -*
 
 import unittest
-from wxPlotLab.dataModel import Container,\
+from mplotlab.dataModel import Container,\
                                 Variable,\
                                 Collection,\
                                 Projection,\

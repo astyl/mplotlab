@@ -2,7 +2,7 @@
 
 import wx
 from wx.aui import AuiNotebook
-from wxPlotLab import App
+from mplotlab import App
 from GraphicPanel import GraphicPanel
 
 class GraphicBook(wx.Panel):

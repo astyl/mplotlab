@@ -6,11 +6,15 @@ from wx.propgrid import ColourProperty,\
                         FloatProperty,\
                         IntProperty,\
                         StringProperty
-from wxPlotLab.dataModel import COLOR,STRING,INT,FLOAT,BOOL,MODELS,Variable,Source,NDARRAY
-# class :
-#     # this class is only used as a simple enumeration
-#     STRING,COLOR,NDARRAY,INT,FLOAT,MODEL= list(range(6))
-# from wxPlotLab.dataModel import AbcModel,
+from mplotlab.dataModel import COLOR,\
+                               STRING,\
+                               INT,\
+                               FLOAT,\
+                               BOOL,\
+                               MODELS,\
+                               Variable,\
+                               Source,\
+                               NDARRAY
 
 propertyMap = {
     COLOR: ColourProperty,   

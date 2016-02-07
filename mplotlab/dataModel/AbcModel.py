@@ -1,5 +1,5 @@
 # -*-coding:Utf-8 -*
-from wxPlotLab.utils import checkTypeReturned, checkTypeParams
+from mplotlab.utils import checkTypeReturned, checkTypeParams
 from copy import copy
 
 from AbcType import AType,STRING#,VECTOR

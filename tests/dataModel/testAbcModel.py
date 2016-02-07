@@ -2,7 +2,7 @@
 
 import unittest
 import xml.etree.cElementTree as ET
-from wxPlotLab.dataModel import AbcModel,\
+from mplotlab.dataModel import AbcModel,\
                                 FLOAT,\
                                 MODELS,\
                                 STRING,\

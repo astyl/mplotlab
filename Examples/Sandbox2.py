@@ -3,8 +3,8 @@
 import numpy as np
 
 # src
-from wxPlotLab import App
-from wxPlotLab.dataModel import Source,SourceExpression,SourceSocket,\
+from mplotlab import App
+from mplotlab.dataModel import Source,SourceExpression,SourceSocket,\
                                 Variable,\
                                 Collection,\
                                 Projection,\

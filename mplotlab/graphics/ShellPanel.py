@@ -1,7 +1,7 @@
 # -*-coding:Utf-8 -*
 
 from wx.py.shell import Shell
-from wxPlotLab import App
+from mplotlab import App
 
 class ShellPanel(Shell):
     

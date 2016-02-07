@@ -3,7 +3,7 @@ from GraphicBook import GraphicBook
 from ConfigPanel import ConfigPanel
 from ShellPanel import ShellPanel
 from TreePanel import TreePanel
-from wxPlotLab.dataModel.Container import Container
+from mplotlab.dataModel.Container import Container
 import wx.aui,os
 
 # menu
@@ -17,7 +17,7 @@ class MainWin(wx.Frame):
 
     def __init__(self):
         wx.Frame.__init__(self, None, -1, 
-                          title="wxPlotLab", 
+                          title="mplotlab", 
                           size=(1200,675), 
                           style=wx.DEFAULT_FRAME_STYLE|wx.SUNKEN_BORDER|wx.CLIP_CHILDREN)
         # model container
@@ -60,7 +60,7 @@ class MainWin(wx.Frame):
         self.statusbar = self.CreateStatusBar(2, wx.ST_SIZEGRIP)
         self.statusbar.SetStatusWidths([-2, -3])
         self.statusbar.SetStatusText("Ready", 0)
-        self.statusbar.SetStatusText("Welcome To wxPlotLab!", 1)
+        self.statusbar.SetStatusText("Welcome To mplotlab!", 1)
 
         # add a bunch of panes
         self._mgr.AddPane(self.__configPanel, wx.aui.AuiPaneInfo().
@@ -156,12 +156,12 @@ class MainWin(wx.Frame):
     def OnAbout(self, event):
         msg = u""" 
 The MIT License (MIT)
-Copyright (c) 2015 
+Copyright (c) 2016 
 
-wxPlotLab by André ASTYL
+mplotlab by André ASTYL
 andreastyl@gmail.com
 """
-        dlg = wx.MessageDialog(self, msg, "About wxPlotLab",
+        dlg = wx.MessageDialog(self, msg, "About mplotlab",
                                wx.OK | wx.ICON_INFORMATION)
         dlg.ShowModal()
         dlg.Destroy()        
