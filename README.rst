@@ -1,7 +1,6 @@
 MPLOTLAB: Interactive Matplotlib Application using wxPython
 ===========================================================
-.. warning::
-   The project has just come out from the prototype phase and still needs a lot of hard work to meet its promise ! 
+The project has just come out from the prototype phase and still needs a lot of hard work to meet its promise ! 
 
 Description
 -----------
