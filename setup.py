@@ -1,22 +1,29 @@
 #!/usr/bin/env python
 
-from distutils.core import setup
+from setuptools import setup
 
-version = "0.1"
+version = "0.2"
 long_desc = """
-mplotlab is an interactive plotting application using Matplotlib and wxPython.
-It provides an API that intends to help users to build their own application
-that displays nicely by leaving them to focus on mastering their data. 
+MPLOTLAB: Interactive Matplotlib Application using wxPython
+==================================================================
 
-mplotlab is particularly meant to be suitable for streaming data, real-time processing and visualization. 
+.. _wxPython: http://www.wxpython.org/
+.. _matplotlib:  http://matplotlib.sourceforge.net/
+.. _wxmplot: https://github.com/newville/wxmplot/
+
+Mplotlab is an interactive plotting application using `matplotlib`_ and `wxPython`_.
+It provides an API that intends to help users to build their own application by leaving them to focus on mastering their data. 
+
+Mplotlab is particularly meant to be suitable for **streaming data, real-time processing and interactive visualization**. 
 It uses an enhanced graphic animation of matplotlib spoken for interactive application.
-It provides nice features such as tweakable data filters and source handlers (sockets, ...).
+It provides nice features such as tweakable data filters and source handlers (*sockets, ...*).
 
-mplotlab engine is based on a figure factory that interprets a mplotlab model parsable in an .xml file.
-Thus, it allows end-users to save and load figures without typing any line of code.
+Mplotlab engine is based on a figure factory that interprets a mplotlab model parsable in an .xml file.
+Thus, it allows GUI users to edit, save and load figures without typing any line of code.
 
-mplotlab is closely modelled on the excellent project 'wxmplot' developped by Matt Newville
-https://github.com/newville/wxmplot
+Mplotlab is closely modelled on the excellent project `wxmplot`_ developped by Matt Newville
+
+.. image:: https://raw.githubusercontent.com/astyl/mplotlab/master/doc/images/slide_dynamic_example.gif
 """
 
 
