@@ -1,7 +1,7 @@
 MPLOTLAB: Interactive Matplotlib Application using wxPython
 ===========================================================
 .. warning::
-The project has just come out from the prototype phase and still needs a lot of hard work to meet its promise ! 
+   The project has just come out from the prototype phase and still needs a lot of hard work to meet its promise ! 
 
 Description
 -----------
@@ -30,7 +30,7 @@ Animated slides (T=1s) receiving simply the time from a tcp/ip socket (T=50ms) a
 
 Documentation
 -------------
-.. _here:: http://pythonhosted.org/mplotlab/
+.. _here: http://pythonhosted.org/mplotlab/
 
 Documentation is avaible  `here`_.
 
