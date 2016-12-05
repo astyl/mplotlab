@@ -1,64 +1,28 @@
 # -*-coding:Utf-8 -*
 
 import unittest
-import xml.etree.cElementTree as ET
-from mplotlab.dataModel import FLOAT,\
-                                STRING,\
-                                COLOR,\
-                                INT,\
-                                BOOL
-#                                 VECTOR,\
-#                                 NDARRAY,\
-import numpy as np
+from mplotlab.utils.abctypes import LIST,\
+                                    STRING,\
+                                    COLOR,\
+                                    INT,\
+                                    BOOL
+import numpy as np 
 
 class TestAType(unittest.TestCase):
-    def test_STRING(self):
-        root = ET.Element("root")
-        msg = "hello world !"
-        STRING.toxml("msg",msg , root)
-        mm = ET.tostring(root)
-        print mm
-        self.assertTrue(mm == """<root><STRING parameter="msg">hello world !</STRING></root>""")
-        
-        res = STRING.fromxml(root[0])
-        print res 
-        self.assertTrue(res == msg)
-        
-    def test_INT(self):
-        root = ET.Element("root")
-        msg = 78
-        INT.toxml("msg",msg , root)
-        mm = ET.tostring(root)
-        print mm
-        self.assertTrue(mm == """<root><INT parameter="msg">78</INT></root>""")
-        
-        res = INT.fromxml(root[0])
-        print res 
-        self.assertTrue(res == msg)
-        
-    def test_FLOAT(self):
-        root = ET.Element("root")
-        msg = 78.5
-        FLOAT.toxml("msg",msg , root)
-        mm = ET.tostring(root)
-        print mm
-        self.assertTrue(mm == """<root><FLOAT parameter="msg">78.5</FLOAT></root>""")
-        
-        res = FLOAT.fromxml(root[0])
-        print res 
-        self.assertTrue(res == msg)        
 
-    def test_BOOL(self):
-        root = ET.Element("root")
-        msg = True
-        BOOL.toxml("msg",msg , root)
-        mm = ET.tostring(root)
-        print mm
-        self.assertTrue(mm == """<root><BOOL parameter="msg">1</BOOL></root>""")
-        
-        res = BOOL.fromxml(root[0])
-        print res 
-        self.assertTrue(res == msg)
+    def test_LIST(self):
+        ali = LIST()
+        l = ali.getBase()
+        l.append(BOOL(False))
+        l.append(INT(36))
+        msg=ali.tostringxml("mylist")
+        msgRef=\
+        """<root><mylist type="LIST">"""+\
+            """<elem type="BOOL">0</elem>"""+\
+            """<elem type="INT">36</elem>"""+\
+        """</mylist></root>"""
+
+        self.assertEqual(msgRef, msg)
 
 if __name__ == '__main__':
     unittest.main()

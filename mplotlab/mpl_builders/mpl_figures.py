@@ -5,14 +5,14 @@ def buildFigure(figure,slide):
     # Slide
     title = slide.get_title()
     projections = slide.get_projections()
-    
+    aniperiod= slide.get_animation_period()
     figure.suptitle(title)
     figure.abcModel = slide
     
     animatedArtists = []
     # Projection
     for i,projection in enumerate(projections):
-        collections = projection.get_collections()
+        pltmdls = projection.get_plotmodels()
         xlabel = projection.get_xlabel()
         ylabel = projection.get_ylabel()
         autolim = projection.get_autolim()
@@ -27,18 +27,17 @@ def buildFigure(figure,slide):
         axes.abcModel = projection
         projection.axes = axes
         
-        for collection in collections:
-            # Collection
-            X = collection.get_X().getVariableData()
-            Y = collection.get_Y().getVariableData()
+        for pltmdl in pltmdls:
+            mvars=pltmdl.get_variables()
+            X = mvars[0].getData()
+            Y = mvars[1].getData()
             pL = ["color","linestyle"]
-            kw = { k: collection.getAttr(k) \
+            kw = { k: getattr(pltmdl,"get_"+k)() \
                                         for k in pL} 
-            
             line,=axes.plot(X,Y,**kw)
-            line.abcModel = collection
+            line.abcModel = pltmdl
             
-            if collection.get_animation():
+            if pltmdl.get_animation():
                 animatedArtists.append(line)
 
         if not autolim:
@@ -51,5 +50,6 @@ def buildFigure(figure,slide):
     if len(animatedArtists)>0:
         if hasattr(figure,"ani"):
             figure.ani._stop()
-        figure.ani = MPL_ArtistAnimation(figure, [animatedArtists], interval=100, blit=True,
+            del figure.ani
+        figure.ani = MPL_ArtistAnimation(figure, [animatedArtists], interval=aniperiod,blit=False,
                                 repeat_delay=0)

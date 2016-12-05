@@ -1,109 +1,124 @@
 # -*-coding:Utf-8 -*
-
-from AbcModel import AbcModel,MODELS
-from Variable import Variable
-from Collection import Collection
-from Projection import Projection
-from Source import Source
-from Slide import Slide
+from mplotlab.utils.abctypes import GetSubTypes,AType
+from plotmodels import APlotModel
+from sources import ASource
+from variables import AVariable
+from projections import AProjection
+from slides import ASlide
 import xml.etree.cElementTree as ET  
 
 
-class Container(object):
-    MODELCLASSES = [Source,Variable,Collection,Projection,Slide]
-    REGCLASSES = {}
+class Container():
+    modelCategories = \
+    [ASource,AVariable,APlotModel,AProjection,ASlide]
+    categoryLabels = \
+    ["source","variable","plotmodel","projection","slide"]
 
     def __init__(self):
-        self.__modelsByClass = {}
-        self.__modelsById = {}
+        self.__modelsByClassById = {}
+        self.__context = None
         self.flush()
-        # Overload to pass the container instance for auto registration
-        self._setAutoRegistration()
-        
-    def _setAutoRegistration(self):
-        fn = AbcModel.__init__
-        def newInit(*a,**k):
-            k["container"]=self
-            return fn(*a,**k)
-        AbcModel.__init__ = newInit
-
-    @classmethod
-    def getAType(cls,name):
-        return cls.REGCLASSES[name]
-
-    @classmethod
-    def registerAType(cls,*clsL):
-        for _cls in clsL:
-            cls.REGCLASSES[_cls.__name__]=_cls
-
-    def __str__(self,*a,**k):
-        msg = ""
-        for modelClass in self.MODELCLASSES:
-            for model in self.__modelsByClass[modelClass]:
-                msg+=model.__str__(*a,**k)
-        return msg
 
     def flush(self):
-        self.__modelsByClass.update({modelClass : [] \
-                                for modelClass in self.MODELCLASSES})
-        self.__modelsById = {}
+        self.__modelsByClassById = {
+            #class: [(id,mdl)]
+        }
+
+    def getMdlType(self,cls):
+        mdls=[]
+        for _,mdl in self.__modelsByClassById.get(cls,[]):
+            mdls.append(mdl)
+        return mdls
+
+    def getMdlSubTypes(self,cls):
+        mdls=[]
+        for c in GetSubTypes(cls):
+            mdls.extend(self.getMdlType(c))
+        return mdls
 
     def toxml(self,filename):
-        root = ET.Element("container")
-        for modelClass in self.MODELCLASSES:
-            models=[]
-            for model in self.__modelsByClass[modelClass]:
-                models.append(model)
-            MODELS.toxml(modelClass.__name__,models,root,parseModel=True)
+        root = ET.Element("models")
+        for label,mdlCat in zip(self.categoryLabels,\
+                                self.modelCategories):
+            for mdl in self.getMdlSubTypes(mdlCat):
+                mdl.toxml(label,
+                          root,
+                          populateModel=True)
         tree = ET.ElementTree(root)
         tree.write(filename)
 
     def fromxml(self,filename):        
         tree = ET.ElementTree(file=filename)
         root = tree.getroot()
+        self.__context={}
         for et in root:
-            models = MODELS.fromxml(et,container=self)
-            for model in models:
-                self.register(model)
-        return ET.ElementTree(root)
+            AType.fromxml(et,self)
+        del self.__context
+        self.__context=None
+    
+    def __register(self,m_id,model,context):
+        m_cls = model.__class__
+        if not context.has_key(m_cls):
+            context[m_cls]=[]
+        if not self.__hasModel(m_id, m_cls, context):
+            context[m_cls].append((m_id,model))
+        else:
+            raise Exception(\
+                "Id already used. Cannot register '%s'"%\
+                                        model.get_name())
 
     def register(self,model):
-        m_id = model.get_id()
-        if not self.hasModel(m_id):
-            self.__modelsById[m_id]=model
-            for modelClass in self.MODELCLASSES:
-                if isinstance(model,modelClass):
-                    ll = self.__modelsByClass[modelClass]
-                    ll.append(model)
-                    model._set_container(self)
-                    break
+        m_id = int(model.get_id())
+        self.__register(m_id,model,self.__modelsByClassById)
+
+    def registerContext(self,c_id,model):
+        if not self.__context is None:
+            self.__register(c_id,model,self.__context)
+            
+    def __hasModel(self,m_id,m_cls,context):
+        st=False
+        for _id,_ in context.get(m_cls,[]):
+            if _id==m_id:
+                st=True
+                break
+        return st
+
+    def hasModel(self,m_id,m_cls,useContext=False):
+        if useContext and not self.__context is None:
+            return self.__hasModel(m_id,m_cls,self.__context)
+        return self.__hasModel(m_id,m_cls,self.__modelsByClassById)
+
+    def __getModel(self,m_id,m_cls,context):
+        mdl=None
+        for _id,_mdl in context.get(m_cls,[]):
+            if _id==m_id:
+                mdl=_mdl
+                break
+        return mdl
+
+    def getModel(self,m_id,m_cls,useContext=False):
+        if useContext and not self.__context is None:
+            return self.__getModel(m_id,m_cls,self.__context)
+        return self.__getModel(m_id,m_cls,self.__modelsByClassById)
 
     def delete(self,model):
         m_id = model.get_id()
-        if self.hasModel(m_id):
-            del self.__modelsById[m_id]
-            for modelClass in self.MODELCLASSES:
-                if isinstance(model,modelClass):
-                    ll = self.__modelsByClass[modelClass]
-                    del ll[ll.index(model)]
-
-    def hasModel(self,m_id):
-        return self.__modelsById.has_key(m_id)
-
-    def getModel(self,m_id):
-        return self.__modelsById.get(m_id,None)
+        m_cls = model.__class__
+        if self.hasModel(m_id,m_cls):
+            del self.__modelsByClassById[m_cls][m_id]
 
     def getSources(self):
-        return self.__modelsByClass[Source]
+        return self.getMdlSubTypes(ASource)
 
     def getVariables(self):
-        return self.__modelsByClass[Variable]
+        return self.getMdlSubTypes(AVariable)
 
-    def getCollections(self):
-        return self.__modelsByClass[Collection]
+    def getPlotModels(self):
+        return self.getMdlSubTypes(APlotModel)
 
     def getProjections(self):
-        return self.__modelsByClass[Projection]
+        return self.getMdlSubTypes(AProjection)
 
     def getSlides(self):
-        return self.__modelsByClass[Slide]
+        return self.getMdlSubTypes(ASlide)
+

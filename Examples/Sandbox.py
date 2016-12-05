@@ -1,80 +1,56 @@
 # -*-coding:Utf-8 -*
-
-import numpy as np
-
-# src
 from mplotlab import App
-from mplotlab.models import SourceExpression,\
-                                Variable,\
-                                Collection,\
-                                Projection,\
-                                Slide
+from mplotlab.models.container import Container
+from mplotlab.models.sources import SourceExpression
+from mplotlab.models.variables import Variable
+from mplotlab.models.plotmodels import Line2D
+from mplotlab.models.projections import Projection2D
+from mplotlab.models.slides import Slide
 
 # DATA MODEL
-def makeSlide(source):
-    slide = Slide(
-        name = "slide",
-        title = "test title slide ",
+def addSources(container):
+    SourceExpression(container, name="T",
+        expression="arange(0,100)",         
     )
-    projections = slide.get_projections()
-    # projection 1
-    projection = Projection(
-        name = "projection1",
-        xlabel = "xlabel projection 1 ",
-        ylabel = "ylabel projection 1 ",
-        collections = [],
-        xmin = 0.,
-        xmax = 3.,
-        ymin = -1. ,
-        ymax  = 1.
+    SourceExpression(container, name="K",
+        expression="25",         
     )
-    projections.append(projection)
-    collections = projection.get_collections()
+def addSlides(container):
+    varX=Variable(container, name="X", 
+        formula="T"
+    )
+    varY1=Variable(container, name="Y", 
+        formula="sin(2*pi*T/K)"
+    )
+    varY2=Variable(container, name="Y", 
+        formula="cos(2*pi*T/K)"
+    )
+    lines_1=Line2D(container, name="sin",
+        variables=[varX,varY1],
+        color="blue",
+        linestyle="-"
+    )
+    lines_2=Line2D(container, name="cos",
+        variables=[varX,varY2],
+        color="red",
+        linestyle=":"
+    )
+    proj = Projection2D(container, name= "proj",
+        plotmodels=[lines_1,lines_2]
+    )
+    slide0 = Slide(container, name = "slide",
+        projections=[proj],
+        title = "test slide title",
+    )
 
-    collections.append(Collection(
-        name = "collection1",
-        X = Variable(source=source),
-        Y = Variable(formula="sin(2*pi*T)"),
-        color = "blue",
-        linestyle =  "-",
-    ))
-    collections.append(Collection(
-        name = "collection2",
-        X = Variable(source=source),
-        Y = Variable(formula="sin(2*pi*(T-0.5))"),
-        color = "green",
-        linestyle =  "--",
-    ))
-    
-    # projection 2
-    projection = Projection(
-        name = "projection2",
-        xlabel = "xlabel projection 2 ",
-        ylabel = "ylabel projection 2 ",
-        autolim = True,
-        collections = [],
-        xmin = 0.,
-        xmax = 3.,
-        ymin = np.exp(0),
-        ymax = np.exp(3)
-    )
-    projections.append(projection)
-    collections = projection.get_collections()
-    
-    collections.append(Collection(
-        name = "collection3",
-        X = Variable(source=source),
-        Y = Variable(formula="tan(T)"),
-        color = "red",
-        linestyle =  "-",
-    ))
-    return slide
+if __name__ == '__main__':
+    # Create the mplotlab application
+    app = App()    
+    # Create models stored in container
+    container=app.mainWin.getContainer()
+    addSources(container)
+    addSlides(container)
+    # launch
+    app.mainWin.showSlide()
+    app.MainLoop()
 
-# Create the mplotlab application
-app = App()
-# the source is described by an numpy expression 
-sourceT= SourceExpression(name="T",expression="np.arange(0.0,3.0,0.1)")
-slide = makeSlide(sourceT)
-app.mainWin.showSlide(slide)
-# GO :) 
-app.MainLoop()

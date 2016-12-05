@@ -5,11 +5,11 @@ from matplotlib.animation import ArtistAnimation as AA
 class MPL_ArtistAnimation(AA):
 
     def updateArtists(self,artists):
-        print "updating artists %s ...."%artists
         for line in artists:
-            collection = line.abcModel
-            line.set_xdata(collection.get_X().getVariableData())
-            line.set_ydata(collection.get_Y().getVariableData())
+            pltmdl = line.abcModel
+            mvars=pltmdl.get_variables()
+            line.set_xdata(mvars[0].getData())
+            line.set_ydata(mvars[1].getData())
         return artists
 
     def _step(self, *a,**k):

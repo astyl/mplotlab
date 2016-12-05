@@ -1,17 +1,22 @@
 # -*-coding:Utf-8 -*
 
-from AbcModel import AbcModel
-from Variable import Variable
-from AbcType import COLOR ,\
-                    STRING,\
-                    BOOL
+from abcmodels import AModel
+from mplotlab.utils.abctypes import RegisterType,LIST,COLOR,STRING,BOOL
 
-class Collection(AbcModel):
-    attributeInfos = list(AbcModel.attributeInfos)
-    attributeInfos.extend([
-        ("X", (Variable,Variable,Variable(),"var X")),
-        ("Y", (Variable,Variable,Variable(),"var Y")),
-        ("color", (str,COLOR,"blue","artist color")),
-        ("linestyle",  (str,STRING,"-","linestyle")),
-        ("animation",(bool,BOOL,False,"enable artist animation"))
+class APlotModel(AModel):
+    parametersInfo = list(AModel.parametersInfo)
+    parametersInfo.extend([
+        ("variables",LIST,lambda:[],"variables X, Y [,Z] ... "),
+        ("animation",BOOL,lambda:False,"plot animation")
     ])
+
+class Line2D(APlotModel):
+    parametersInfo = list(APlotModel.parametersInfo)
+    parametersInfo.extend([
+        ("color",COLOR,lambda:'blue',"line color"),
+        ("linestyle",STRING,lambda:'-',"linestyle"),
+    ])
+
+# Atype Registration
+RegisterType(APlotModel)
+RegisterType(Line2D)

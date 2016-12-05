@@ -1,175 +1,142 @@
 # -*-coding:Utf-8 -*
-from mplotlab.utils import checkTypeReturned, checkTypeParams
-from copy import copy
+from mplotlab.utils.decorators import checkTypeReturned, checkTypeParams
+from mplotlab.utils.abctypes import RegisterType,AType,STRING,DICT
 
-from AbcType import AType,STRING#,VECTOR
+def NewModelId(cls):
+    if not NewModelId.idsByType.has_key(cls):
+        NewModelId.idsByType[cls]=0
+    modelId = int(NewModelId.idsByType[cls])
+    NewModelId.idsByType[cls]+=1
+    return modelId
+NewModelId.idsByType={}
 
-def NewModelId():
-    res = NewModelId.id
-    NewModelId.id +=1
-    return res
-NewModelId.id=0
-
-class AbcModel(AType):
+class AModel(DICT):
     """ 
-    Abstract class representing a model element.
-    For derived class, use the parameter 'attributeInfos' to auto generate 
-    its properties 
+    Base model class
+    >>> import xml.etree.cElementTree as ET
+    >>> root = ET.Element("root")
+    >>> from container import Container
+    >>> ct = Container()
+    >>> mdl = AModel(ct,name="tintin")
+    >>> mdl.toxml("model",root,populateModel=True)
+    >>> print ET.tostring(root)
+    <root><model id="0" type="AModel"><name type="STRING">tintin</name></model></root>
+    >>> ct2 = Container()
+    >>> mdlExp=AType.fromxml(root[0],ct2)
+    >>> print mdlExp.get_name()
+    tintin
     """
-    __id = None 
-    attributeInfos = [ 
-        # attribute definition
-        ("name", (                  # attribute name
-             str,                  # attribute value instance of
-             STRING,               # attribute type 
-             "",        # attribute default value (can be None)
-             "name info"           # attribute short description
-        )),
+    parametersInfo = [ 
+        (
+            "name",          # parameter name
+            STRING,          # parameter type (type)
+            lambda:"noname", # callable that returns default value
+            "model name"     # parameter description
+        ),
+        # ...
     ]
-    
-    def __init__(self,**k):
-        self.__id = k.pop("__id_serialized",NewModelId())
-        self.__container = k.pop("container",None)
-        try: self.__container.register(self)
-        except: pass
-        self.__properties = {}
-        for name,infos in self.attributeInfos:
-            vclass,vtype,value,desc = infos
-            if not isinstance(value,vclass):
-                raise Exception("Attribute default value of '%s'"+ \
-                                "should be an instance of '%s' "%(name,vclass))
-            
-            # add attribute (ex: 'self._name')
-            setattr(self,"_"+name,copy(value))
-            # add attribute setter (ex: 'self.set_name('new_name')')
-            setattr(self,"set_"+name,self.__createSetter(name,vclass,desc))
-            # add attribute getter (ex: 'self.get_name()')
-            setattr(self,"get_"+name,self.__createGetter(name,vclass,desc))
-            # add attribute type 
-            self.__properties[name] = vtype
-        ## Specialisation from dict arguments
-        self.update(**k)
 
-    def get_container(self):
-        return self.__container
+    def __init__(self,container,*a,**kwargs):
+        DICT.__init__(self)
+        self.__id = int(NewModelId(self.__class__))
+        self.__container = container
+        self.__container.register(self)
 
-    def _set_container(self,container):
-        self.__container=container
+        for name,vclass,getDefaultValue,desc in self.parametersInfo:
+            if not issubclass(vclass,AType):
+                raise Exception("Type parameter '%s'"+ \
+                                "must be a subclass of AType"%(name))
+
+            if name in kwargs.keys():
+                value=kwargs[name]
+            else:
+                value=getDefaultValue()
+
+            if isinstance(value,vclass.BaseType):
+                b=value
+                value=vclass()
+                value.setBase(b)
+
+            if not value is None and \
+                    not isinstance(value,vclass):
+                raise Exception("Type parameter '%s' "%(name)+ \
+                                "must be %s "%(vclass))                
+
+            self._baseValue[name]=value
+            # create setter & getter
+            if issubclass(vclass, AModel):
+                setterFn=self.__createSetterAModel(name,vclass,desc)
+                getterFn=self.__createGetterAModel(name,vclass,desc)
+            else:
+                setterFn=self.__createSetterBaseType(name,vclass,desc)
+                getterFn=self.__createGetterBaseType(name,vclass,desc)
+            # add parameter setter
+            setattr(self,"set_"+name,setterFn)
+            # add parameter getter
+            setattr(self,"get_"+name,getterFn)
 
     def get_id(self):
         return self.__id
+    
+    def getContainer(self):
+        return self.__container
 
-    @staticmethod
-    def getSubEt(clsname,parameter,model,et,**attr):
-        return AType.getSubEt(clsname,parameter,model,et,
-                              id=str(model.get_id()),
-                              name=model.get_name(),
-                              **attr)
+    def getSubEt(self,*a,**k):
+        subEt=AType.getSubEt(self,*a,**k)
+        subEt.set("id","%d"%self.__id)
+        return subEt
+
+    def populate(self,subEt,*a,**k):
+        populateModel=k.get("populateModel",False)
+        if populateModel:
+            k["populateModel"]=False
+            DICT.populate(self, subEt,*a,**k)
 
     @classmethod
-    def populate(cls,parameter,self,subEt,parseModel=False):
-        if parseModel:
-            for name,aType in self.__properties.items():
-                value = self.getAttr(name)
-                aType.toxml(name,value,subEt,parseModel=False)
-
-    @classmethod
-    def fromxml(cls, et, **k):
-        container = k.get("container")
-        name = et.tag
-        m_id = int(et.attrib.get("id"))
-        if container.hasModel(m_id):
-            return container.getModel(m_id)
+    def fromxmlclass(cls,et,container,*a,**k):
+        c_id = int(et.attrib["id"])
+        if container.hasModel(c_id,cls,useContext=True):
+            mdl=container.getModel(c_id,cls,useContext=True)
         else:
-            infos = {name:vType for name,(_,vType,_,_) in cls.attributeInfos}
-            params = {"__id_serialized":m_id}
-            for subEt in et:
-                name = subEt.attrib["parameter"]
-                vType = infos[name]
-                params[name] = vType.fromxml(subEt, **k)
-            new_model = cls(**params)
-            return new_model
+            mdl=DICT.fromxmlclass.__func__(cls,et,container,*a,**k)
+            container.registerContext(c_id,mdl)
+        return mdl
 
-    def getProperties(self):
-        return self.__properties
-
-    def update(self,**k):
-        """ 
-        update the model from dict arguments
-        ex: self.update(name="toto",size=170)
-        """
-        for name, value in k.items():
-            self.setAttr(name,value)
-
-    def __checkAttrName(self,name):
-        if not hasattr(self, "_"+name):
-            raise Exception("Attribute %s doesn't exist" % name)
-
-    def setAttr(self,name,value):
-        """ 
-        set the value of an attribute 
-        ex : self.setAttr("name",value)
-        """
-        self.__checkAttrName(name)
-        getattr(self,"set_"+name)(value)
-
-    def getAttr(self,name):
-        self.__checkAttrName(name)
-        return getattr(self,"get_"+name)()
-
-    def __str__(self,it=""):
-        m_id = self.get_id()
-        msgT = [it+"[%s] ID:%d"%(self.__class__.__name__,m_id)]
-        msgL = []
-        for name,(_,vType,_,_) in self.attributeInfos:
-            value = self.getAttr(name)
-            if issubclass(vType, AbcModel):
-                value = value.__str__(it+"\t")
-            elif issubclass(vType, MODELS):
-                sep = "\n"+it+"\t"+"-"*25
-                value = sep.join(\
-                     map(lambda x:x.__str__(it+"\t"),value)\
-                     +["\n"]\
-                     )
-            msgL.append(it+"%s:%s" % (name,value))
-        return "\n"+"\n".join(msgT+msgL)
-
-    def __createSetter(self,name,vclass,desc):
+    def __createSetterAModel(self,name,vclass,desc):      
         @checkTypeParams(vclass)
         def setterFn(value):
-            return setattr(self,"_"+name,value)
-        setterFn.__doc__ = """
-{desc}
-@param {name} {vclass}
-""".format(name=name,vclass=vclass,desc=desc)
+            self._baseValue[name]=value
+        setterFn.__doc__ = "\n%s\n@param %s:%s\n" % \
+                                    (desc,name,vclass)           
         return setterFn
-        
-    def __createGetter(self,name,vclass,desc):
+
+    def __createSetterBaseType(self,name,vclass,desc):      
+        @checkTypeParams(vclass.BaseType)
+        def setterFn(value):
+            self._baseValue[name].setBase(value)
+        setterFn.__doc__ = "\n%s\n@param %s:%s\n" % \
+                                    (desc,name,vclass.BaseType)           
+        return setterFn
+
+    def __createGetterAModel(self,name,vclass,desc):
         @checkTypeReturned(vclass)
         def getterFn():
-            return getattr(self,"_"+name)
-        getterFn.__doc__ = """
-{desc}
-@return {name} {vclass}
-""".format(name=name,vclass=vclass,desc=desc)
+            return self._baseValue[name]
+        getterFn.__doc__ = "\n%s\n@return %s:%s\n" % \
+                                    (desc,name,vclass)
+        return getterFn
+    
+    def __createGetterBaseType(self,name,vclass,desc):
+        @checkTypeReturned(vclass.BaseType)
+        def getterFn():
+            return self._baseValue[name].getBase()
+        getterFn.__doc__ = "\n%s\n@return %s:%s\n" % \
+                                    (desc,name,vclass.BaseType)
         return getterFn
 
-class MODELS(AType):
-    typeClass = AbcModel
-    containerStaticClass = None #Container to init
+# Atype Registration
+RegisterType(AModel)
 
-    @classmethod
-    def populate(cls,name,abcModels,subEt,**k):
-        for i,model in enumerate(abcModels):
-            modelClass = model.__class__
-            if not issubclass(modelClass,cls.typeClass):
-                raise Exception()
-            modelClass.toxml(name+"%d"%i,model,subEt,**k)
-
-    @classmethod
-    def fromxml(cls,et,**k):
-        res=[]
-        for subEt in et:
-            modelClass = cls.containerStaticClass.getAType(subEt.tag)
-            res.append(modelClass.fromxml(subEt,**k))
-        return res
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()

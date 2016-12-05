@@ -1,114 +1,69 @@
-<container>
-    <MODELS parameter="Source">
-        <SourceSocket id="3" name="T" parameter="Source0">
-            <STRING parameter="name">T</STRING>
-            <INT parameter="buffsize">9999999</INT>
-            <INT parameter="period">50</INT>
-            <STRING parameter="host">localhost</STRING>
-            <INT parameter="port">50981</INT>
-        </SourceSocket>
-    </MODELS>
-    <MODELS parameter="Variable">
-        <Variable id="6" name="" parameter="Variable0">
-            <Source id="3" name="T" parameter="source" />
-            <STRING parameter="name" />
-            <STRING parameter="formula" />
-        </Variable>
-        <Variable id="7" name="" parameter="Variable1">
-            <Source id="0" name="" parameter="source" />
-            <STRING parameter="name" />
-            <STRING parameter="formula">sin(2*pi*T)</STRING>
-        </Variable>
-        <Variable id="9" name="" parameter="Variable2">
-            <Source id="3" name="T" parameter="source" />
-            <STRING parameter="name" />
-            <STRING parameter="formula" />
-        </Variable>
-        <Variable id="10" name="" parameter="Variable3">
-            <Source id="0" name="" parameter="source" />
-            <STRING parameter="name" />
-            <STRING parameter="formula">sin(2*pi*(T-0.5))</STRING>
-        </Variable>
-        <Variable id="14" name="" parameter="Variable4">
-            <Source id="3" name="T" parameter="source" />
-            <STRING parameter="name" />
-            <STRING parameter="formula" />
-        </Variable>
-        <Variable id="15" name="" parameter="Variable5">
-            <Source id="0" name="" parameter="source" />
-            <STRING parameter="name" />
-            <STRING parameter="formula">tan(T)</STRING>
-        </Variable>
-    </MODELS>
-    <MODELS parameter="Collection">
-        <Collection id="8" name="collection1" parameter="Collection0">
-            <STRING parameter="name">collection1</STRING>
-            <COLOR parameter="color">blue</COLOR>
-            <BOOL parameter="animation">1</BOOL>
-            <Variable id="7" name="" parameter="Y" />
-            <Variable id="6" name="" parameter="X" />
-            <STRING parameter="linestyle">-</STRING>
-        </Collection>
-        <Collection id="11" name="collection2" parameter="Collection1">
-            <STRING parameter="name">collection2</STRING>
-            <COLOR parameter="color">green</COLOR>
-            <BOOL parameter="animation">1</BOOL>
-            <Variable id="10" name="" parameter="Y" />
-            <Variable id="9" name="" parameter="X" />
-            <STRING parameter="linestyle">--</STRING>
-        </Collection>
-        <Collection id="16" name="collection3" parameter="Collection2">
-            <STRING parameter="name">collection3</STRING>
-            <COLOR parameter="color">red</COLOR>
-            <BOOL parameter="animation">1</BOOL>
-            <Variable id="15" name="" parameter="Y" />
-            <Variable id="14" name="" parameter="X" />
-            <STRING parameter="linestyle">-</STRING>
-        </Collection>
-    </MODELS>
-    <MODELS parameter="Projection">
-        <Projection id="5" name="projection1" parameter="Projection0">
-            <STRING parameter="name">projection1</STRING>
-            <BOOL parameter="autolim">0</BOOL>
-            <STRING parameter="xlabel">xlabel projection 1 </STRING>
-            <FLOAT parameter="xmax">15.0</FLOAT>
-            <STRING parameter="ylabel">ylabel projection 1 </STRING>
-            <FLOAT parameter="xmin">0.0</FLOAT>
-            <MODELS parameter="collections">
-                <Collection id="8" name="collection1" parameter="collections0" />
-                <Collection id="11" name="collection2" parameter="collections1" />
-            </MODELS>
-            <FLOAT parameter="ymin">-1.4</FLOAT>
-            <FLOAT parameter="ymax">1.4</FLOAT>
-        </Projection>
-        <Projection id="13" name="projection2" parameter="Projection1">
-            <STRING parameter="name">projection2</STRING>
-            <BOOL parameter="autolim">0</BOOL>
-            <STRING parameter="xlabel">xlabel projection 2 </STRING>
-            <FLOAT parameter="xmax">15.0</FLOAT>
-            <STRING parameter="ylabel">ylabel projection 2 </STRING>
-            <FLOAT parameter="xmin">0.0</FLOAT>
-            <MODELS parameter="collections">
-                <Collection id="16" name="collection3" parameter="collections0" />
-            </MODELS>
-            <FLOAT parameter="ymin">-10.0</FLOAT>
-            <FLOAT parameter="ymax">10.0</FLOAT>
-        </Projection>
-    </MODELS>
-    <MODELS parameter="Slide">
-        <Slide id="4" name="slide1" parameter="Slide0">
-            <MODELS parameter="projections">
-                <Projection id="5" name="projection1" parameter="projections0" />
-            </MODELS>
-            <STRING parameter="name">slide1</STRING>
-            <STRING parameter="title">slide1</STRING>
-        </Slide>
-        <Slide id="12" name="slide2" parameter="Slide1">
-            <MODELS parameter="projections">
-                <Projection id="13" name="projection2" parameter="projections0" />
-            </MODELS>
-            <STRING parameter="name">slide2</STRING>
-            <STRING parameter="title">slide2</STRING>
-        </Slide>
-    </MODELS>
-</container>
+<?xml version="1.0"?>
+<models>
+    <source id="0" type="SourceExpression">
+        <expression type="STRING">25</expression>
+        <name type="STRING">K</name>
+    </source>
+    <source id="0" type="SourceSocket">
+        <buffsize type="INT">9999999</buffsize>
+        <host type="STRING">localhost</host>
+        <period type="INT">500</period>
+        <name type="STRING">T</name>
+        <port type="INT">50981</port>
+    </source>
+    <variable id="0" type="Variable">
+        <formula type="STRING">T</formula>
+        <name type="STRING">X</name>
+    </variable>
+    <variable id="1" type="Variable">
+        <formula type="STRING">sin(2*pi*T/K)</formula>
+        <name type="STRING">Y</name>
+    </variable>
+    <variable id="2" type="Variable">
+        <formula type="STRING">cos(2*pi*T/K)</formula>
+        <name type="STRING">Y</name>
+    </variable>
+    <plotmodel id="0" type="Line2D">
+        <color type="COLOR">blue</color>
+        <variables type="LIST">
+            <elem id="0" type="Variable"/>
+            <elem id="1" type="Variable"/>
+        </variables>
+        <animation type="BOOL">1</animation>
+        <linestyle type="STRING">-</linestyle>
+        <name type="STRING">sin</name>
+    </plotmodel>
+    <plotmodel id="1" type="Line2D">
+        <color type="COLOR">red</color>
+        <variables type="LIST">
+            <elem id="0" type="Variable"/>
+            <elem id="2" type="Variable"/>
+        </variables>
+        <animation type="BOOL">1</animation>
+        <linestyle type="STRING">:</linestyle>
+        <name type="STRING">cos</name>
+    </plotmodel>
+    <projection id="0" type="Projection2D">
+        <name type="STRING">proj</name>
+        <title type="STRING">title</title>
+        <autolim type="BOOL">1</autolim>
+        <xlabel type="STRING"/>
+        <plotmodels type="LIST">
+            <elem id="0" type="Line2D"/>
+            <elem id="1" type="Line2D"/>
+        </plotmodels>
+        <xmax type="FLOAT">1.0</xmax>
+        <ylabel type="STRING"/>
+        <xmin type="FLOAT">0.0</xmin>
+        <ymin type="FLOAT">0.0</ymin>
+        <ymax type="FLOAT">1.0</ymax>
+    </projection>
+    <slide id="0" type="Slide">
+        <projections type="LIST">
+            <elem id="0" type="Projection2D"/>
+        </projections>
+        <name type="STRING">slide</name>
+        <animation_period type="INT">500</animation_period>
+        <title type="STRING">test slide title</title>
+    </slide>
+</models>

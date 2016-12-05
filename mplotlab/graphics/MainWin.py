@@ -3,7 +3,7 @@ from GraphicBook import GraphicBook
 from ConfigPanel import ConfigPanel
 from ShellPanel import ShellPanel
 from TreePanel import TreePanel
-from mplotlab.models.Container import Container
+from mplotlab.models.container import Container
 import wx.aui,os
 
 # menu
@@ -102,24 +102,25 @@ class MainWin(wx.Frame):
 
     def getContainer(self):
         return self.__container
- 
-    
+        
     def showSlideSel(self):
         slide = self.__treePanel.getSlideSelected()
-        if not slide is None:
-            self.showSlide(slide)
+        self.showSlide(slide)
         
-    def showSlide(self,slide):
+    def showSlide(self,slide=None):
+        if slide is None:
+            slide=self.__container.getSlides()[-1]
+
         # update Panels
         self.__treePanel.updateTree() 
-        self.__graphicBook.updateBook()
         self.__shellPanel.refreshLocals(slide=slide)
-        gp = self.__graphicBook.createGraphicPanel(slide)
-        # show interactive figure associated 
+        self.__graphicBook.updateBook()
+        gp=self.__graphicBook.getGraphicPanel(slide)
+        self.__graphicBook.selectGraphicPanel(gp)
+        # show interactive figure associated
         gp.build()    # matplotlib figure creation
         gp.draw()     # matplotlib figure draw
-        gp.control()  # graphicControl enabling
-
+        gp.control()  # enable graphicControl (zoom, ..)
     ###########################    
     ###########################    
     ###########################    
@@ -135,7 +136,7 @@ class MainWin(wx.Frame):
         if dlg.ShowModal() == wx.ID_OK:
             self.__container.flush()
             self.__container.fromxml(dlg.GetPath())
-            self.showSlide(self.__container.getSlides()[0])
+            self.showSlide()
 
     def OnSaveXml(self,event):
         dlg = wx.FileDialog(

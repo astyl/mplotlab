@@ -1,5 +1,5 @@
-__version__  = '0.2'
-__date__     = '08/02/2016'
+__version__  = '0.3'
+__date__     = '08/12/2016'
 
 import sys, wx
 try:
@@ -11,44 +11,24 @@ except ImportError:
 except:
     pass
 
-
 # App (singleton)
 class App(object):
     __instance = None
     def __new__(cls,*a,**k):
         if cls.__instance is None:
-            cls.__instance = App.newApp(*a,**k)
+            cls.__instance = App.__newApp(*a,**k)
         return cls.__instance
 
     @staticmethod
-    def newApp(*a,**k):
+    def __newApp(*a,**k):
         app = wx.App(*a,**k)
         app.mainWin = newWxPlotFrame()
         app.SetTopWindow(app.mainWin)
         app.mainWin.Show()
         return app
-
-# Utils
-from utils import log,\
-                  configParser,\
-                  msgMap,\
-                  createError,\
-                  getErrHdlr,\
-                  regErrHdlr,\
-                  remErrHdlr,\
-                  checkTypeParams,\
-                  checkTypeReturned
-
-# Models
-from mplotlab.models import Slide,\
-                      Variable,\
-                      Collection,\
-                      Projection,\
-                      Container
-
+ 
 # Graphics
 from graphics import newWxPlotFrame,\
                      newWxPlotPanel
-
 
 

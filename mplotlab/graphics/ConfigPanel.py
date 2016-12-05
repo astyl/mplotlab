@@ -3,9 +3,9 @@
 import wx
 import wx.propgrid as wxpg
 from mplotlab.graphics import propertyMap
-from mplotlab.utils import log
+from mplotlab.utils.Logger import log
 from mplotlab import App
-from mplotlab.models import COLOR
+from mplotlab.utils.abctypes import COLOR
 from matplotlib.colors import ColorConverter,rgb2hex
 
 class ConfigPanel( wx.Panel ):
@@ -46,11 +46,13 @@ class ConfigPanel( wx.Panel ):
         
     def updateFigure(self,event):
         if self.__modelSel is None:
+            event.Skip()  
             return
         
         for name,value in self.pg.GetPropertyValues().items():
-            ## To be handled by custom property 
-            if COLOR == self.__modelSel.getProperties()[name]:
+            ## To be handled by custom property
+            if name=='color':
+#             if COLOR == self.__modelSel.getProperties()[name]:
                 r,g,b = value.Get()
                 value = r/255.,g/255.,b/255.
                 value = rgb2hex(value)            
@@ -58,7 +60,7 @@ class ConfigPanel( wx.Panel ):
             if isinstance(value,unicode):
                 value = value.encode()
                 
-            self.__modelSel.setAttr(name,value)
+            getattr(self.__modelSel,"set_"+name)(value)
 
         App().mainWin.showSlideSel()
         
@@ -67,9 +69,10 @@ class ConfigPanel( wx.Panel ):
             self.txt.SetLabel("")
             return
     
-        txtLabel = modelSel.get_name()
+        txtLabel = "%s (%s)"% (
+                    modelSel.get_name(),
+                    modelSel.__class__.__name__)
         self.txt.SetLabel(txtLabel)
-        log.info(txtLabel)
             
         self.__modelSel = modelSel
 
@@ -78,9 +81,9 @@ class ConfigPanel( wx.Panel ):
         self.pg.AddPage(txtLabel)        
         
         #modelSel        
-        for name, propertyKey in modelSel.getProperties().items():
+        for name, propertyKey,_,desc in modelSel.parametersInfo:
             propertyClass = propertyMap[propertyKey]            
-            value=modelSel.getAttr(name)
+            value=getattr(modelSel,"get_"+name)()
             
             ## To be handled by custom property 
             if "alpha" == name and value is None:

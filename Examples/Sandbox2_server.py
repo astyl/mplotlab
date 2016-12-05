@@ -11,23 +11,19 @@ class DataThread(threading.Thread):
         self.clientsocket = clientsocket
 
     def run(self): 
-        k=20000
-        t0 = time.time()
-        y = 0
-        
-        while k>0:
-            print "waiting instructions..."
-            r = self.clientsocket.recv(2048)
-            print r
-            if r=="giveMeYourData":
-                x = time.time()-t0
-                data = "%f"%x
-                print "sending data"
-                self.clientsocket.send(data)
-                print "data sent"
-                time.sleep(0.005)
-                k=k-1
+        self.__count=0
+        print "waiting instructions..."
+        r = self.clientsocket.recv(2048)
+        if r=="waitingForNewData":
+            while True:
+                self.cbThread()
 
+    def cbThread(self):
+        self.clientsocket.send(u"%f "%self.__count)
+        self.__count+=1
+        # called every 50ms
+        time.sleep(0.050)
+        
 tcpsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 tcpsock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 tcpsock.bind(("localhost", 50981))
